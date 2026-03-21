@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathLienLand — Acceso</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 16px 32px;
+      background-color: #ffffff;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: #222;
+      letter-spacing: 1px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 36px 40px;
+      width: 100%;
+      max-width: 400px;
+      margin-top: 80px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 28px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: #888;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+
+    .tab.active {
+      color: #222;
+      border-bottom: 2px solid #222;
+      font-weight: 600;
+    }
+
+    .form {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form.active {
+      display: flex;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: #555;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #888;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 11px;
+      background-color: #222;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #444;
+    }
+
+    .mensaje {
+      font-size: 0.85rem;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .mensaje.error {
+      color: #c0392b;
+    }
+
+    .mensaje.ok {
+      color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>MathLienLand</h1>
+  </header>
+
+  <div class="card">
+    <div class="tabs">
+      <div class="tab active" id="tab-login" onclick="switchTab('login')">Iniciar sesión</div>
+      <div class="tab" id="tab-register" onclick="switchTab('register')">Registrarse</div>
+    </div>
+
+    <!-- Formulario login -->
+    <form class="form active" id="form-login" onsubmit="login(event)">
+      <div>
+        <label>Email</label>
+        <input type="email" id="login-email" required />
+      </div>
+      <div>
+        <label>Contraseña</label>
+        <input type="password" id="login-password" required />
+      </div>
+      <p class="mensaje" id="login-msg"></p>
+      <button type="submit">Entrar</button>
+    </form>
+
+    <!-- Formulario registro -->
+    <form class="form" id="form-register" onsubmit="register(event)">
+      <div>
+        <label>Nombre</label>
+        <input type="text" id="register-name" required />
+      </div>
+      <div>
+        <label>Email</label>
+        <input type="email" id="register-email" required />
+      </div>
+      <div>
+        <label>Contraseña</label>
+        <input type="password" id="register-password" required minlength="6" />
+      </div>
+      <p class="mensaje" id="register-msg"></p>
+      <button type="submit">Crear cuenta</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script>
+    // Si ya hay sesión activa, redirigir al juego
+    db.auth.getSession().then(({ data }) => {
+      if (data.session) window.location.href = 'game.html';
+    });
+
+    function switchTab(tab) {
+      document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+      document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+      document.getElementById('form-login').classList.toggle('active', tab === 'login');
+      document.getElementById('form-register').classList.toggle('active', tab === 'register');
+    }
+
+    async function login(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const msg = document.getElementById('login-msg');
+
+      const { error } = await db.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        msg.textContent = 'Email o contraseña incorrectos.';
+        msg.className = 'mensaje error';
+      } else {
+        window.location.href = 'game.html';
+      }
+    }
+
+    async function register(e) {
+      e.preventDefault();
+      const name = document.getElementById('register-name').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      const msg = document.getElementById('register-msg');
+
+      const { data, error } = await db.auth.signUp({ email, password });
+
+      if (error) {
+        msg.textContent = error.message;
+        msg.className = 'mensaje error';
+        return;
+      }
+
+      // Guardar nombre en la tabla users
+      await db.from('users').insert({
+        id: data.user.id,
+        name: name,
+        email: email
+      });
+
+      msg.textContent = 'Cuenta creada. Ya puedes iniciar sesión.';
+      msg.className = 'mensaje ok';
+      switchTab('login');
+    }
+  </script>
+
+</body>
+</html>
