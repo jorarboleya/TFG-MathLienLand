@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Rendimiento – MathLienLand</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="page-dashboard">
+
+  <header>
+    <div style="min-width:160px;"></div>
+    <h1>Mi Rendimiento</h1>
+    <div id="user-info">
+      <span id="user-name"></span>
+      <a href="game.html" id="btn-game">Volver al juego</a>
+      <button id="btn-logout">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+
+    <!-- Tarjetas de resumen -->
+    <section class="stats-cards">
+      <div class="stat-card">
+        <span class="stat-value" id="total-sessions">—</span>
+        <span class="stat-label">Sesiones jugadas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="total-answers">—</span>
+        <span class="stat-label">Respuestas totales</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="global-accuracy">—</span>
+        <span class="stat-label">Precisión global</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="avg-time">—</span>
+        <span class="stat-label">Tiempo medio (seg)</span>
+      </div>
+    </section>
+
+    <!-- Gráficas -->
+    <section class="charts-grid">
+      <div class="chart-card">
+        <h2 class="chart-title">Tasa de acierto por minijuego</h2>
+        <div class="chart-wrapper">
+          <canvas id="chart-accuracy"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h2 class="chart-title">Tiempo medio por minijuego (seg)</h2>
+        <div class="chart-wrapper">
+          <canvas id="chart-time"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card chart-card--full">
+        <h2 class="chart-title">Rendimiento por nivel de dificultad</h2>
+        <div class="chart-wrapper">
+          <canvas id="chart-difficulty"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Historial de sesiones -->
+    <section class="sessions-section">
+      <h2 class="section-title">Historial de sesiones</h2>
+      <div id="sessions-table-wrapper">
+        <p class="loading-text">Cargando sesiones...</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/supabase.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
