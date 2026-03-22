@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi Rendimiento – MathLienLand</title>
+  <title>My Performance – MathLienLand</title>
   <link rel="stylesheet" href="css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -12,54 +12,54 @@
 
   <header>
     <div style="min-width:160px;"></div>
-    <h1>Mi Rendimiento</h1>
+    <h1>My Performance</h1>
     <div id="user-info">
       <span id="user-name"></span>
-      <a href="game.html" id="btn-game">Volver al juego</a>
-      <button id="btn-logout">Cerrar sesión</button>
+      <a href="game.html" id="btn-dashboard">Back to game</a>
+      <button id="btn-logout">Log out</button>
     </div>
   </header>
 
   <main class="dashboard-main">
 
-    <!-- Tarjetas de resumen -->
+    <!--Upper summary cards-->
     <section class="stats-cards">
       <div class="stat-card">
         <span class="stat-value" id="total-sessions">—</span>
-        <span class="stat-label">Sesiones jugadas</span>
+        <span class="stat-label">Sessions played</span>
       </div>
       <div class="stat-card">
         <span class="stat-value" id="total-answers">—</span>
-        <span class="stat-label">Respuestas totales</span>
+        <span class="stat-label">Total answers</span>
       </div>
       <div class="stat-card">
         <span class="stat-value" id="global-accuracy">—</span>
-        <span class="stat-label">Precisión global</span>
+        <span class="stat-label">Global accuracy</span>
       </div>
       <div class="stat-card">
         <span class="stat-value" id="avg-time">—</span>
-        <span class="stat-label">Tiempo medio (seg)</span>
+        <span class="stat-label">Avg. time (sec)</span>
       </div>
     </section>
 
-    <!-- Gráficas -->
+    <!--Charts-->
     <section class="charts-grid">
       <div class="chart-card">
-        <h2 class="chart-title">Tasa de acierto por minijuego</h2>
+        <h2 class="chart-title">Accuracy rate by minigame</h2>
         <div class="chart-wrapper">
           <canvas id="chart-accuracy"></canvas>
         </div>
       </div>
 
       <div class="chart-card">
-        <h2 class="chart-title">Tiempo medio por minijuego (seg)</h2>
+        <h2 class="chart-title">Avg. time by minigame (sec)</h2>
         <div class="chart-wrapper">
           <canvas id="chart-time"></canvas>
         </div>
       </div>
 
       <div class="chart-card chart-card--full">
-        <h2 class="chart-title">Rendimiento por nivel de dificultad</h2>
+        <h2 class="chart-title">Performance by difficulty level</h2>
         <div class="chart-wrapper">
           <canvas id="chart-difficulty"></canvas>
         </div>
@@ -68,9 +68,9 @@
 
     <!-- Historial de sesiones -->
     <section class="sessions-section">
-      <h2 class="section-title">Historial de sesiones</h2>
+      <h2 class="section-title">Session history</h2>
       <div id="sessions-table-wrapper">
-        <p class="loading-text">Cargando sesiones...</p>
+        <p class="loading-text">Loading sessions...</p>
       </div>
     </section>
 

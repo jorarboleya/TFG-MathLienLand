@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MathLienLand — Acceso</title>
+  <title>MathLienLand — Login</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body class="page-auth">
@@ -14,8 +14,8 @@
 
   <div class="card">
     <div class="tabs">
-      <div class="tab active" id="tab-login" onclick="switchTab('login')">Iniciar sesión</div>
-      <div class="tab" id="tab-register" onclick="switchTab('register')">Registrarse</div>
+      <div class="tab active" id="tab-login" onclick="switchTab('login')">Log in</div>
+      <div class="tab" id="tab-register" onclick="switchTab('register')">Sign up</div>
     </div>
 
     <!--Login form -->
@@ -25,17 +25,17 @@
         <input type="email" id="login-email" required />
       </div>
       <div>
-        <label>Contraseña</label>
+        <label>Password</label>
         <input type="password" id="login-password" required />
       </div>
       <p class="mensaje" id="login-msg"></p>
-      <button type="submit">Entrar</button>
+      <button type="submit">Log in</button>
     </form>
 
     <!--Register form-->
     <form class="form" id="form-register" onsubmit="register(event)">
       <div>
-        <label>Nombre</label>
+        <label>Name</label>
         <input type="text" id="register-name" required />
       </div>
       <div>
@@ -43,11 +43,11 @@
         <input type="email" id="register-email" required />
       </div>
       <div>
-        <label>Contraseña</label>
+        <label>Password</label>
         <input type="password" id="register-password" required minlength="6" />
       </div>
       <p class="mensaje" id="register-msg"></p>
-      <button type="submit">Crear cuenta</button>
+      <button type="submit">Create account</button>
     </form>
   </div>
 
@@ -75,7 +75,7 @@
       const { error } = await db.auth.signInWithPassword({ email, password });
 
       if (error) {
-        msg.textContent = 'Email o contraseña incorrectos.';
+        msg.textContent = 'Incorrect email or password.';
         msg.className = 'mensaje error';
       } else {
         window.location.href = 'game.html';
@@ -104,7 +104,7 @@
         email: email
       });
 
-      msg.textContent = 'Cuenta creada. Ya puedes iniciar sesión.';
+      msg.textContent = 'Account created. You can now log in.';
       msg.className = 'mensaje ok';
       switchTab('login');
     }

@@ -1,9 +1,6 @@
-// js/dashboard.js
-// Lógica del dashboard de rendimiento
-
 (async () => {
 
-  // ─── 1. AUTENTICACIÓN ────────────────────────────────────────────────────────
+  //AUTHENTICATION
   const { data: { session } } = await db.auth.getSession();
   if (!session) {
     window.location.href = 'auth.html';
@@ -12,7 +9,7 @@
 
   const userId = session.user.id;
 
-  // Mostrar nombre de usuario
+  //Show username
   const { data: profile } = await db
     .from('users')
     .select('name')
@@ -22,32 +19,36 @@
   document.getElementById('user-name').textContent =
     profile?.name ?? session.user.email;
 
-  // Botón de logout
+  //Logout button
   document.getElementById('btn-logout').addEventListener('click', async () => {
     await db.auth.signOut();
     window.location.href = 'auth.html';
   });
 
 
-  // ─── 2. FETCH DE DATOS ───────────────────────────────────────────────────────
-  const [sessionsResult, answersResult] = await Promise.all([
-    db
-      .from('sessions')
-      .select('id, minigame, date, duration')
-      .eq('user_id', userId)
-      .order('date', { ascending: false }),
-
-    db
-      .from('answers')
-      .select('session_id, correct, time, difficulty, sessions!inner(user_id)')
-      .eq('sessions.user_id', userId)
-  ]);
+  //FETCH DATA
+  //all sessions from the user, from the most recent to the oldest
+  const sessionsResult = await db
+    .from('sessions')
+    .select('id, minigame, date, duration')
+    .eq('user_id', userId)
+    .order('date', { ascending: false });
 
   const sessions = sessionsResult.data ?? [];
-  const answers  = answersResult.data  ?? [];
+
+  const sessionIds = sessions.map(s => s.id);
+  //all answers from the user, from all his/her sessions
+  const answersResult = sessionIds.length > 0
+    ? await db
+        .from('answers')
+        .select('session_id, correct, time, difficulty')
+        .in('session_id', sessionIds)
+    : { data: [] };
+
+  const answers = answersResult.data ?? [];
 
 
-  // ─── 3. TARJETAS DE RESUMEN ──────────────────────────────────────────────────
+  //SUMMARY CARDS
   const totalSessions  = sessions.length;
   const totalAnswers   = answers.length;
   const correctCount   = answers.filter(a => a.correct).length;
@@ -58,13 +59,15 @@
     ? (answers.reduce((sum, a) => sum + (a.time ?? 0), 0) / totalAnswers).toFixed(1)
     : 0;
 
+  //for the HTML  
   document.getElementById('total-sessions').textContent  = totalSessions;
   document.getElementById('total-answers').textContent   = totalAnswers;
   document.getElementById('global-accuracy').textContent = `${globalAccuracy}%`;
   document.getElementById('avg-time').textContent        = avgTime;
 
 
-  // ─── 4. HELPER DE AGRUPACIÓN ─────────────────────────────────────────────────
+  //HELPER FUNCTIONS
+  //takes an array and a function that returns a key, and returns an object with the key and the correct, total and time sum
   function groupByKey(arr, keyFn) {
     const map = {};
     for (const item of arr) {
@@ -78,8 +81,9 @@
   }
 
 
-  // ─── 5. GRÁFICAS POR MINIJUEGO ───────────────────────────────────────────────
-  // Mapa sessionId → minigame para enriquecer cada answer
+  //CHART BY MINIGAME
+  //map sessionId to minigame
+  //the answers don't have the minigame, so we need to map it
   const sessionMinigameMap = {};
   for (const s of sessions) {
     sessionMinigameMap[s.id] = s.minigame;
@@ -87,7 +91,7 @@
 
   const answersWithMinigame = answers.map(a => ({
     ...a,
-    minigame: sessionMinigameMap[a.session_id] ?? 'Desconocido'
+    minigame: sessionMinigameMap[a.session_id] ?? 'Unknown'
   }));
 
   const byMinigame    = groupByKey(answersWithMinigame, a => a.minigame);
@@ -100,22 +104,22 @@
   );
 
   renderBarChart('chart-accuracy', minigameLabels, accuracyData, {
-    label: 'Tasa de acierto (%)',
+    label: 'Accuracy rate (%)',
     color: 'rgba(34, 197, 94, 0.8)',
     max: 100,
     suffix: '%'
   });
 
   renderBarChart('chart-time', minigameLabels, avgTimeData, {
-    label: 'Tiempo medio (seg)',
+    label: 'Avg. time (sec)',
     color: 'rgba(59, 130, 246, 0.8)',
     suffix: 's'
   });
 
 
-  // ─── 6. GRÁFICA POR DIFICULTAD ───────────────────────────────────────────────
+  //DIFFICULTY CHART
   const byDifficulty = groupByKey(answers, a => a.difficulty ?? 1);
-  const diffLabels   = [1, 2, 3, 4, 5].map(d => `Dificultad ${d}`);
+  const diffLabels   = [1, 2, 3, 4, 5].map(d => `Difficulty ${d}`);
   const diffAccuracy = [1, 2, 3, 4, 5].map(d => {
     const g = byDifficulty[d];
     if (!g || g.total === 0) return null;
@@ -123,13 +127,14 @@
   });
 
   renderLineChart('chart-difficulty', diffLabels, diffAccuracy, {
-    label: 'Tasa de acierto (%)',
+    label: 'Accuracy rate (%)',
     color: 'rgba(168, 85, 247, 0.8)',
     max: 100
   });
 
 
-  // ─── 7. TABLA DE SESIONES RECIENTES ─────────────────────────────────────────
+  //RECENT SESSIONS TABLE
+  //group by sessionId and count the correct and total answers
   const answersBySession = {};
   for (const a of answers) {
     if (!answersBySession[a.session_id]) {
@@ -142,7 +147,7 @@
   const wrapper = document.getElementById('sessions-table-wrapper');
 
   if (sessions.length === 0) {
-    wrapper.innerHTML = '<p class="empty-text">Todavía no tienes sesiones registradas.</p>';
+    wrapper.innerHTML = '<p class="empty-text">You have no sessions registered yet.</p>';
   } else {
     const rows = sessions.slice(0, 20).map(s => {
       const stats = answersBySession[s.id] ?? { correct: 0, total: 0 };
@@ -168,11 +173,11 @@
       <table class="sessions-table">
         <thead>
           <tr>
-            <th>Fecha</th>
-            <th>Minijuego</th>
-            <th>Correctas</th>
-            <th>Precisión</th>
-            <th>Duración</th>
+            <th>Date</th>
+            <th>Minigame</th>
+            <th>Correct</th>
+            <th>Accuracy</th>
+            <th>Duration</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -180,7 +185,8 @@
   }
 
 
-  // ─── 8. FUNCIONES DE GRÁFICAS ────────────────────────────────────────────────
+  //CHART FUNCTIONS
+  //render a bar chart
   function renderBarChart(canvasId, labels, data, opts) {
     const ctx = document.getElementById(canvasId).getContext('2d');
     new Chart(ctx, {
