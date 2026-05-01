@@ -46,6 +46,13 @@
         <label>Password</label>
         <input type="password" id="register-password" required minlength="6" />
       </div>
+      <div>
+        <label>I am a...</label>
+        <select id="register-role">
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+        </select>
+      </div>
       <p class="mensaje" id="register-msg"></p>
       <button type="submit">Create account</button>
     </form>
@@ -54,9 +61,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>
   <script>
+    async function redirectByRole(userId) {
+      const { data: usuario } = await db.from('users').select('role').eq('id', userId).single();
+      window.location.href = usuario?.role === 'teacher' ? 'teacher-dashboard.html' : 'game.html';
+    }
+
     //Check session
     db.auth.getSession().then(({ data }) => {
-      if (data.session) window.location.href = 'game.html';
+      if (data.session) redirectByRole(data.session.user.id);
     });
 
     function switchTab(tab) {
@@ -72,13 +84,13 @@
       const password = document.getElementById('login-password').value;
       const msg = document.getElementById('login-msg');
 
-      const { error } = await db.auth.signInWithPassword({ email, password });
+      const { data: authData, error } = await db.auth.signInWithPassword({ email, password });
 
       if (error) {
         msg.textContent = 'Incorrect email or password.';
         msg.className = 'mensaje error';
       } else {
-        window.location.href = 'game.html';
+        await redirectByRole(authData.user.id);
       }
     }
 
@@ -87,6 +99,7 @@
       const name = document.getElementById('register-name').value;
       const email = document.getElementById('register-email').value;
       const password = document.getElementById('register-password').value;
+      const role = document.getElementById('register-role').value;
       const msg = document.getElementById('register-msg');
 
       const { data, error } = await db.auth.signUp({ email, password });
@@ -97,12 +110,7 @@
         return;
       }
 
-      //Save name in users table
-      await db.from('users').insert({
-        id: data.user.id,
-        name: name,
-        email: email
-      });
+      await db.from('users').insert({ id: data.user.id, name, email, role });
 
       msg.textContent = 'Account created. You can now log in.';
       msg.className = 'mensaje ok';

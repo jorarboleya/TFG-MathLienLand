@@ -1,36 +1,61 @@
--- ============================================================
--- 01_tables.sql
--- Creación de las tablas de la base de datos de MathLienLand
--- ============================================================
+--Creación de las tablas de la base de datos de MathLienLand
 
--- Tabla de perfiles de usuario
--- Complementa la autenticación de Supabase Auth.
--- El campo id coincide con el uid que genera Supabase al registrarse.
+--Users table
 create table users (
   id            uuid primary key,
   name          text not null,
   email         text not null,
+  role          text not null default 'student', -- 'student' | 'teacher'
   register_date timestamptz not null default now()
 );
 
--- Tabla de sesiones de juego
--- Cada vez que un usuario juega a un minijuego se crea una sesión.
+--Sessions table
 create table sessions (
   id        uuid primary key default gen_random_uuid(),
   user_id   uuid not null references users(id) on delete cascade,
   minigame  text not null,
   date      timestamptz not null default now(),
-  duration  int  -- duración en segundos, se rellena al terminar la sesión
+  duration  int 
 );
 
--- Tabla de respuestas individuales
--- Cada pregunta respondida dentro de una sesión genera una fila.
--- Estos datos son los que usará la IA para adaptar los niveles.
+--Answers table
 create table answers (
   id          uuid primary key default gen_random_uuid(),
   session_id  uuid not null references sessions(id) on delete cascade,
   question_id text not null,
   correct     boolean not null,
-  time        int not null,  -- segundos que tardó en responder
-  difficulty  int not null   -- nivel de dificultad de la pregunta (1-5)
+  time        int not null,
+  difficulty  int not null
 );
+
+-- PHASE 1: Teacher role
+-- Run ALTER TABLE and CREATE TABLE statements from the SQL block in PLAN.md
+-- (these are already applied in Supabase; kept here for documentation)
+
+--Groups table
+create table groups (
+  id         uuid primary key default gen_random_uuid(),
+  teacher_id uuid not null references users(id) on delete cascade,
+  name       text not null,
+  created_at timestamptz not null default now()
+);
+
+--Group members table (students joined to a group)
+create table group_members (
+  id         uuid primary key default gen_random_uuid(),
+  group_id   uuid not null references groups(id) on delete cascade,
+  student_id uuid not null references users(id) on delete cascade,
+  joined_at  timestamptz not null default now(),
+  unique(group_id, student_id)
+);
+
+-- IDEA H: Achievements / Badges
+-- Run this migration in the Supabase SQL editor before deploying.
+create table achievements (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid not null references users(id) on delete cascade,
+  badge_type text not null,
+  earned_at  timestamptz not null default now(),
+  unique(user_id, badge_type)
+);
+alter table achievements enable row level security;

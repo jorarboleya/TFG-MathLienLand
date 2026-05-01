@@ -18,6 +18,14 @@
     </div>
   </header>
 
+  <!-- Mode selector modal (shown only if student is in a group) -->
+  <div id="mode-modal" style="display:none;">
+    <div id="mode-modal-box">
+      <h2>How do you want to play?</h2>
+      <div id="mode-buttons"></div>
+    </div>
+  </div>
+
   <main>
     <div id="game-container">
       <div id="placeholder">
@@ -36,7 +44,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>
   <script>
-    //Check session
+    window.activeGroupId = null;
+
+    //check auth
     db.auth.getSession().then(async ({ data }) => {
       if (!data.session) {
         window.location.href = 'auth.html';
@@ -44,68 +54,110 @@
       }
 
       const userId = data.session.user.id;
+      //exposed before the async profile fetch so Godot can read it via JavaScript.eval()
+      window.currentUserId = userId;
       const { data: usuario } = await db
         .from('users')
-        .select('name')
+        .select('name, role')
         .eq('id', userId)
         .single();
 
-      if (usuario) {
-        document.getElementById('user-name').textContent = usuario.name;
+      if (!usuario) return;
+
+      if (usuario.role === 'teacher') {
+        window.location.href = 'teacher-dashboard.html';
+        return;
+      }
+
+      document.getElementById('user-name').textContent = usuario.name;
+
+      const { data: memberships } = await db
+        .from('group_members')
+        .select('group_id, groups(id, name)')
+        .eq('student_id', userId);
+
+      if (memberships && memberships.length > 0) {
+        showModeModal(memberships.map(m => m.groups));
       }
     });
+
+    function showModeModal(groups) {
+      const modal = document.getElementById('mode-modal');
+      const buttonsDiv = document.getElementById('mode-buttons');
+      modal.style.display = 'flex';
+
+      groups.forEach(group => {
+        const btn = document.createElement('button');
+        btn.textContent = `Play for group: ${group.name}`;
+        btn.className = 'mode-btn mode-btn--group';
+        btn.onclick = () => {
+          window.activeGroupId = group.id;
+          modal.style.display = 'none';
+        };
+        buttonsDiv.appendChild(btn);
+      });
+
+      const btnIndividual = document.createElement('button');
+      btnIndividual.textContent = 'Play individually (private)';
+      btnIndividual.className = 'mode-btn mode-btn--individual';
+      btnIndividual.onclick = () => {
+        window.activeGroupId = null;
+        modal.style.display = 'none';
+      };
+      buttonsDiv.appendChild(btnIndividual);
+
+      const btnDashboard = document.createElement('button');
+      btnDashboard.textContent = 'Go to my dashboard';
+      btnDashboard.className = 'mode-btn mode-btn--dashboard';
+      btnDashboard.onclick = () => { window.location.href = 'dashboard.html'; };
+      buttonsDiv.appendChild(btnDashboard);
+    }
 
     async function logout() {
       await db.auth.signOut();
       window.location.href = 'index.html';
     }
 
-    //Bridge between godot and supabase
-    async function getCurrentUserId(){
-      const {data} = await db.auth.getSession();
+    //supabase bridge exposed for Godot
+    async function getCurrentUserId() {
+      const { data } = await db.auth.getSession();
       return data.session?.user.id;
     }
 
-    window.saveSession = async function(minigame, duration){
+    window.saveSession = async function (minigame, duration) {
       const userId = await getCurrentUserId();
-      if(!userId) return null;
-      const{data, error}=await db
-      .from('sessions')
-      .insert({
+      if (!userId) return null;
+      const sessionData = {
         user_id: userId,
-        minigame: minigame,
-        duration: duration
-      })
-      .select('id')
-      .single();
-      if(error){
+        minigame,
+        duration,
+        ...(window.activeGroupId && { group_id: window.activeGroupId })
+      };
+      const { data, error } = await db
+        .from('sessions')
+        .insert(sessionData)
+        .select('id')
+        .single();
+      if (error) {
         console.error('Error saving session:', error);
         return null;
       }
-      console.log('Session saved:', data.id);
       return data.id;
     };
 
-    window.saveAnswer = async function (sessionId, questionId, correct, time, difficulty){
-      const {error} = await db
-      .from('answers')
-      .insert({
-        session_id: sessionId,
-        question_id: questionId,
-        correct: correct,
-        time: time,
-        difficulty: difficulty
-      });
-      if(error){
+    window.saveAnswer = async function (sessionId, questionId, correct, time, difficulty) {
+      const { error } = await db
+        .from('answers')
+        .insert({ session_id: sessionId, question_id: questionId, correct, time, difficulty });
+      if (error) {
         console.error('Error saving answer:', error);
-        return null;
       }
     };
 
-    window.saveFullGame = async function(data){
+    window.saveFullGame = async function (data) {
       const sessionId = await window.saveSession(data.minigame, data.duration);
-      if(!sessionId)return null;
-      for(const answer of data.answers){
+      if (!sessionId) return;
+      for (const answer of data.answers) {
         await window.saveAnswer(
           sessionId,
           answer.question_id,
@@ -114,11 +166,9 @@
           answer.difficulty
         );
       }
-      console.log('Game saved:', data.minigame, 'answered:', data.answers.length);
     };
 
 
-    //Load game
     const frame = document.getElementById('game-frame');
     const placeholder = document.getElementById('placeholder');
 
@@ -129,7 +179,12 @@
           placeholder.style.display = 'none';
           frame.style.display = 'block';
         }
+      } catch (e) {}
+      //inject saveFullGame into the iframe so Godot can call it via JavaScript.eval
+      try {
+        frame.contentWindow.saveFullGame = (data) => window.saveFullGame(data);
       } catch (e) {
+        console.error('Could not inject saveFullGame into iframe:', e);
       }
     });
 

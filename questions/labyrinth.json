@@ -1,0 +1,350 @@
+{
+  "questions": [
+    {
+      "question": "If 10cm of a map are 750m in reality, how many meters\n are 13cm in the map?",
+      "answerA": [
+        "1000m",
+        false
+      ],
+      "answerB": [
+        "975m",
+        true
+      ],
+      "answerC": [
+        "500m",
+        false
+      ],
+      "answerD": [
+        "13m",
+        false
+      ],
+      "difficulty": 3,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "A recipe for 4 servings requires 2 cups of flour. How many cups of flour\n are needed for 6 servings?",
+      "answerA": [
+        "3 cups",
+        true
+      ],
+      "answerB": [
+        "2.5 cups",
+        false
+      ],
+      "answerC": [
+        "4 cups",
+        false
+      ],
+      "answerD": [
+        "1.5 cups",
+        false
+      ],
+      "difficulty": 2,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "5 apples cost $3.50. How much would 8 apples cost?",
+      "answerA": [
+        "$4.00",
+        false
+      ],
+      "answerB": [
+        "$5.00",
+        false
+      ],
+      "answerC": [
+        "$5.60",
+        true
+      ],
+      "answerD": [
+        "$6.20",
+        false
+      ],
+      "difficulty": 3,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "If 3 workers can paint a house in 8 hours, how long would it take\n 4 workers to paint the same house, assuming they work at the same rate?",
+      "answerA": [
+        "10 hours",
+        false
+      ],
+      "answerB": [
+        "6 hours",
+        true
+      ],
+      "answerC": [
+        "7 hours",
+        false
+      ],
+      "answerD": [
+        "5 hours",
+        false
+      ],
+      "difficulty": 4,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "A car uses 6 liters of gasoline to travel 90 km. How many liters will it use\n to travel 150 km?",
+      "answerA": [
+        "9 liters",
+        false
+      ],
+      "answerB": [
+        "10 liters",
+        true
+      ],
+      "answerC": [
+        "12 liters",
+        false
+      ],
+      "answerD": [
+        "8 liters",
+        false
+      ],
+      "difficulty": 5,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "A train travels at 60 km/h and takes 4 hours to reach its destination. How long\n would it take if it traveled at 80 km/h?",
+      "answerA": [
+        "3 hours",
+        true
+      ],
+      "answerB": [
+        "3.5 hours",
+        false
+      ],
+      "answerC": [
+        "2 hours",
+        false
+      ],
+      "answerD": [
+        "4.5 hours",
+        false
+      ],
+      "difficulty": 7,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "A factory machine produces 120 toys in 3 hours. How many toys can it produce\n in 5 hours?",
+      "answerA": [
+        "180 toys",
+        false
+      ],
+      "answerB": [
+        "150 toys",
+        false
+      ],
+      "answerC": [
+        "200 toys",
+        true
+      ],
+      "answerD": [
+        "240 toys",
+        false
+      ],
+      "difficulty": 1,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "Sarah reads 45 pages of a book in 90 minutes. How many pages can she read\n in 2 hours?",
+      "answerA": [
+        "50 pages",
+        false
+      ],
+      "answerB": [
+        "60 pages",
+        true
+      ],
+      "answerC": [
+        "75 pages",
+        false
+      ],
+      "answerD": [
+        "40 pages",
+        false
+      ],
+      "difficulty": 4,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "If 4 workers can assemble 100 items in 5 hours, how many items can 6 workers\n assemble in 8 hours, assuming they work at the same rate?",
+      "answerA": [
+        "160 items",
+        false
+      ],
+      "answerB": [
+        "200 items",
+        false
+      ],
+      "answerC": [
+        "240 items",
+        true
+      ],
+      "answerD": [
+        "300 items",
+        false
+      ],
+      "difficulty": 9,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "5 excavators can dig a 300-meter trench in 2 days. How many days would it take\n 8 excavators to dig a 480-meter trench?",
+      "answerA": [
+        "3 days",
+        false
+      ],
+      "answerB": [
+        "2.5 days",
+        false
+      ],
+      "answerC": [
+        "1.5 days",
+        false
+      ],
+      "answerD": [
+        "2 days",
+        true
+      ],
+      "difficulty": 10,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "A tap fills a 20-liter bucket in 50 seconds. How long would it take\n to fill a 32-liter bucket?",
+      "answerA": [
+        "75 seconds",
+        false
+      ],
+      "answerB": [
+        "80 seconds",
+        true
+      ],
+      "answerC": [
+        "60 seconds",
+        false
+      ],
+      "answerD": [
+        "90 seconds",
+        false
+      ],
+      "difficulty": 5,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "A store offers a 20% discount on all items. If a shirt originally costs $40,\n what is its new price after the discount?",
+      "answerA": [
+        "$30",
+        false
+      ],
+      "answerB": [
+        "$32",
+        true
+      ],
+      "answerC": [
+        "$35",
+        false
+      ],
+      "answerD": [
+        "$28",
+        false
+      ],
+      "difficulty": 2,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "A tailor needs 2.5 meters of fabric to make 1 dress. How many meters of fabric\n would be needed to make 7 dresses?",
+      "answerA": [
+        "15 meters",
+        false
+      ],
+      "answerB": [
+        "17.5 meters",
+        true
+      ],
+      "answerC": [
+        "18 meters",
+        false
+      ],
+      "answerD": [
+        "20 meters",
+        false
+      ],
+      "difficulty": 4,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "A light bulb consumes 15 kWh of electricity in 30 days. How much electricity\n would it consume in 45 days?",
+      "answerA": [
+        "20 kWh",
+        false
+      ],
+      "answerB": [
+        "22.5 kWh",
+        true
+      ],
+      "answerC": [
+        "25 kWh",
+        false
+      ],
+      "answerD": [
+        "18 kWh",
+        false
+      ],
+      "difficulty": 7,
+      "explanation": [
+        ""
+      ]
+    },
+    {
+      "question": "3 pumps can empty a 9000-liter tank in 6 hours. How long would it take\n 4 pumps to empty a 12000-liter tank?",
+      "answerA": [
+        "5 hours",
+        false
+      ],
+      "answerB": [
+        "6 hours",
+        true
+      ],
+      "answerC": [
+        "7 hours",
+        false
+      ],
+      "answerD": [
+        "8 hours",
+        false
+      ],
+      "difficulty": 8,
+      "explanation": [
+        ""
+      ]
+    }
+  ],
+  "generated_at": "2026-04-26T14:31:11.146Z"
+}

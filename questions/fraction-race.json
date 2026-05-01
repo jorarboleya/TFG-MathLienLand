@@ -1,0 +1,60 @@
+{
+  "questions": [
+    {
+      "question": "res://assets/race_questions/q1.png",
+      "answerA": ["res://assets/race_questions/q1a1.png", true],
+      "answerB": ["res://assets/race_questions/q1a2.png", false],
+      "answerC": ["res://assets/race_questions/q1a3.png", false],
+      "answerD": ["res://assets/race_questions/q1a4.png", false]
+    },
+    {
+      "question": "res://assets/race_questions/q2.png",
+      "answerA": ["res://assets/race_questions/q2a1.png", false],
+      "answerB": ["res://assets/race_questions/q2a2.png", false],
+      "answerC": ["res://assets/race_questions/q2a3.png", true],
+      "answerD": ["res://assets/race_questions/q2a4.png", false]
+    },
+    {
+      "question": "res://assets/race_questions/q3.png",
+      "answerA": ["res://assets/race_questions/q3a1.png", false],
+      "answerB": ["res://assets/race_questions/q3a2.png", false],
+      "answerC": ["res://assets/race_questions/q3a3.png", false],
+      "answerD": ["res://assets/race_questions/q3a4.png", true]
+    },
+    {
+      "question": "res://assets/race_questions/q4.png",
+      "answerA": ["res://assets/race_questions/q4a1.png", true],
+      "answerB": ["res://assets/race_questions/q4a2.png", false],
+      "answerC": ["res://assets/race_questions/q4a3.png", false],
+      "answerD": ["res://assets/race_questions/q4a4.png", false]
+    },
+    {
+      "question": "res://assets/race_questions/q5.png",
+      "answerA": ["res://assets/race_questions/q5a1.png", false],
+      "answerB": ["res://assets/race_questions/q5a2.png", false],
+      "answerC": ["res://assets/race_questions/q5a3.png", true],
+      "answerD": ["res://assets/race_questions/q5a4.png", false]
+    },
+    {
+      "question": "res://assets/race_questions/q6.png",
+      "answerA": ["res://assets/race_questions/q6a1.png", false],
+      "answerB": ["res://assets/race_questions/q6a2.png", true],
+      "answerC": ["res://assets/race_questions/q6a3.png", false],
+      "answerD": ["res://assets/race_questions/q6a4.png", false]
+    },
+    {
+      "question": "res://assets/race_questions/q7.png",
+      "answerA": ["res://assets/race_questions/q7a1.png", false],
+      "answerB": ["res://assets/race_questions/q7a2.png", false],
+      "answerC": ["res://assets/race_questions/q7a3.png", true],
+      "answerD": ["res://assets/race_questions/q7a4.png", false]
+    },
+    {
+      "question": "res://assets/race_questions/q8.png",
+      "answerA": ["res://assets/race_questions/q8a1.png", false],
+      "answerB": ["res://assets/race_questions/q8a2.png", false],
+      "answerC": ["res://assets/race_questions/q8a3.png", false],
+      "answerD": ["res://assets/race_questions/q8a4.png", true]
+    }
+  ]
+}

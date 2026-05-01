@@ -1,0 +1,154 @@
+{
+  "questions": [
+    {
+      "type": 0,
+      "text": "Is 78 divisible by 2?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 123 divisible by 3?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 150 divisible by 4?",
+      "answer": "A",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 345 divisible by 5?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 216 divisible by 6?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 549 divisible by 9?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 830 divisible by 10?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 451 divisible by 11?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
+      "type": 1,
+      "text": "Select the GCD of 12 and 18:",
+      "answer": "A",
+      "options": {
+        "A": "6",
+        "B": "3",
+        "C": "2",
+        "D": "12"
+      }
+    },
+    {
+      "type": 1,
+      "text": "Select the GCD of 20 and 30:",
+      "answer": "A",
+      "options": {
+        "A": "10",
+        "B": "5",
+        "C": "20",
+        "D": "2"
+      }
+    },
+    {
+      "type": 1,
+      "text": "Select the GCD of 15 and 25:",
+      "answer": "A",
+      "options": {
+        "A": "5",
+        "B": "1",
+        "C": "3",
+        "D": "15"
+      }
+    },
+    {
+      "type": 1,
+      "text": "Select the GCD of 8 and 12:",
+      "answer": "A",
+      "options": {
+        "A": "4",
+        "B": "2",
+        "C": "8",
+        "D": "1"
+      }
+    },
+    {
+      "type": 1,
+      "text": "Select the GCD of 36 and 48:",
+      "answer": "A",
+      "options": {
+        "A": "12",
+        "B": "6",
+        "C": "18",
+        "D": "4"
+      }
+    },
+    {
+      "type": 1,
+      "text": "Select the GCD of 7 and 14:",
+      "answer": "A",
+      "options": {
+        "A": "7",
+        "B": "1",
+        "C": "2",
+        "D": "14"
+      }
+    },
+    {
+      "type": 1,
+      "text": "Select the GCD of 10 and 15:",
+      "answer": "A",
+      "options": {
+        "A": "5",
+        "B": "1",
+        "C": "2",
+        "D": "10"
+      }
+    }
+  ],
+  "generated_at": "2026-04-30T10:10:01.783Z"
+}
