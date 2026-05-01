@@ -4,7 +4,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test tests/*.test.js",
-    "postinstall": "curl -fsSL -o game/index.pck 'https://media.githubusercontent.com/media/jorarboleya/TFG-MathLienLand/main/game/index.pck' && echo 'index.pck downloaded OK'"
+    "postinstall": "node scripts/download-pck.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
