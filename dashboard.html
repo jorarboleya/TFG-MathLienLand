@@ -22,7 +22,22 @@
 
   <main class="dashboard-main">
 
-    <!--Upper summary cards-->
+    <!-- Group join / info section -->
+    <div class="teacher-card" id="join-group-section">
+      <h3 class="section-title">My groups</h3>
+      <div id="group-status">Loading...</div>
+    </div>
+
+    <!-- Dashboard tabs (shown only if student is in a group) -->
+    <div class="dash-tabs" id="dash-tabs" style="display:none;">
+      <div class="dash-tab active" id="tab-private" onclick="switchDashTab('private')">Private</div>
+      <div class="dash-tab" id="tab-group" onclick="switchDashTab('group')">Group</div>
+    </div>
+
+    <!-- Group selector (shown in Group tab when student is in multiple groups) -->
+    <div class="group-selector" id="group-selector" style="display:none;"></div>
+
+    <!-- Stats -->
     <section class="stats-cards">
       <div class="stat-card">
         <span class="stat-value" id="total-sessions">—</span>
@@ -42,7 +57,7 @@
       </div>
     </section>
 
-    <!--Charts-->
+    <!-- Charts -->
     <section class="charts-grid">
       <div class="chart-card">
         <h2 class="chart-title">Accuracy rate by minigame</h2>
@@ -64,9 +79,44 @@
           <canvas id="chart-difficulty"></canvas>
         </div>
       </div>
+
+      <div class="chart-card chart-card--full">
+        <div class="diff-history-header">
+          <h2 class="chart-title">Difficulty evolution</h2>
+          <select id="diff-minigame-select" onchange="updateDiffHistoryChart(this.value)"></select>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="chart-diff-history"></canvas>
+        </div>
+        <p id="diff-history-empty" class="empty-text" style="display:none;">No difficulty data yet. Play a few sessions to see your progression.</p>
+      </div>
+
+      <div class="chart-card chart-card--full">
+        <h2 class="chart-title">Current difficulty level by minigame</h2>
+        <div class="chart-wrapper">
+          <canvas id="chart-adaptive-levels"></canvas>
+        </div>
+        <p id="adaptive-levels-empty" class="empty-text" style="display:none;">Play at least one session to see your current level.</p>
+      </div>
     </section>
 
-    <!-- Historial de sesiones -->
+    <!-- Achievements -->
+    <section class="achievements-section">
+      <h2 class="section-title">Achievements</h2>
+      <div id="achievements-grid" class="achievements-grid"></div>
+    </section>
+
+    <!-- AI Analysis -->
+    <section class="ai-analysis-card">
+      <div class="ai-analysis-header">
+        <h2 class="section-title">AI Analysis</h2>
+        <span class="ai-badge">AI</span>
+      </div>
+      <div id="ai-summary-content" class="ai-summary-text"></div>
+      <button id="btn-ai-analysis" onclick="requestAISummary()">Get AI analysis</button>
+    </section>
+
+    <!-- Session history -->
     <section class="sessions-section">
       <h2 class="section-title">Session history</h2>
       <div id="sessions-table-wrapper">
@@ -75,6 +125,18 @@
     </section>
 
   </main>
+
+  <!-- Leave group confirmation modal -->
+  <div id="leave-modal" style="display:none;">
+    <div id="leave-modal-box">
+      <h3>Leave group?</h3>
+      <p>You won't be able to see group statistics anymore. You can rejoin at any time with the invite code.</p>
+      <div class="leave-modal-actions">
+        <button id="leave-modal-cancel">Cancel</button>
+        <button id="leave-modal-confirm">Leave group</button>
+      </div>
+    </div>
+  </div>
 
   <script src="js/supabase.js"></script>
   <script src="js/dashboard.js"></script>

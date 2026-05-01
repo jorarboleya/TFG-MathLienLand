@@ -1,10 +1,4 @@
--- ============================================================
--- 03_queries.sql
--- Consultas útiles para calcular el rendimiento del usuario.
--- Estas consultas son las que alimentarán a la IA más adelante.
--- ============================================================
-
--- Porcentaje de aciertos por minijuego para un usuario concreto
+--Percentage of correct answers by minigame for a specific user
 select
   s.minigame,
   count(*)                                        as total_preguntas,
@@ -19,7 +13,7 @@ group by s.minigame
 order by s.minigame;
 
 
--- Tiempo medio de respuesta por minijuego
+--Average response time by minigame
 select
   s.minigame,
   round(avg(a.time), 1) as tiempo_medio_segundos
@@ -30,7 +24,7 @@ group by s.minigame
 order by s.minigame;
 
 
--- Rendimiento por nivel de dificultad (útil para la IA)
+--Performance by difficulty level
 select
   s.minigame,
   a.difficulty,
@@ -46,7 +40,7 @@ group by s.minigame, a.difficulty
 order by s.minigame, a.difficulty;
 
 
--- Historial de sesiones de un usuario
+--Session history for a specific user
 select
   s.minigame,
   s.date,

@@ -1,0 +1,305 @@
+{
+  "questions": [
+    {
+      "operand1": 88,
+      "operator": "*",
+      "operand2": 8,
+      "answer": 704
+    },
+    {
+      "operand1": 73,
+      "operator": "-",
+      "operand2": 43,
+      "answer": 30
+    },
+    {
+      "operand1": 14,
+      "operator": "*",
+      "operand2": 3,
+      "answer": 42
+    },
+    {
+      "operand1": 97,
+      "operator": "+",
+      "operand2": 26,
+      "answer": 123
+    },
+    {
+      "operand1": 65,
+      "operator": "+",
+      "operand2": 81,
+      "answer": 146
+    },
+    {
+      "operand1": 83,
+      "operator": "-",
+      "operand2": 50,
+      "answer": 33
+    },
+    {
+      "operand1": 80,
+      "operator": "-",
+      "operand2": 36,
+      "answer": 44
+    },
+    {
+      "operand1": 52,
+      "operator": "+",
+      "operand2": 57,
+      "answer": 109
+    },
+    {
+      "operand1": 19,
+      "operator": "*",
+      "operand2": 4,
+      "answer": 76
+    },
+    {
+      "operand1": 96,
+      "operator": "+",
+      "operand2": 96,
+      "answer": 192
+    },
+    {
+      "operand1": 48,
+      "operator": "-",
+      "operand2": 37,
+      "answer": 11
+    },
+    {
+      "operand1": 71,
+      "operator": "+",
+      "operand2": 76,
+      "answer": 147
+    },
+    {
+      "operand1": 96,
+      "operator": "-",
+      "operand2": 20,
+      "answer": 76
+    },
+    {
+      "operand1": 25,
+      "operator": "+",
+      "operand2": 23,
+      "answer": 48
+    },
+    {
+      "operand1": 62,
+      "operator": "*",
+      "operand2": 1,
+      "answer": 62
+    },
+    {
+      "operand1": 49,
+      "operator": "-",
+      "operand2": 35,
+      "answer": 14
+    },
+    {
+      "operand1": 68,
+      "operator": "+",
+      "operand2": 67,
+      "answer": 135
+    },
+    {
+      "operand1": 75,
+      "operator": "*",
+      "operand2": 8,
+      "answer": 600
+    },
+    {
+      "operand1": 36,
+      "operator": "-",
+      "operand2": 20,
+      "answer": 16
+    },
+    {
+      "operand1": 27,
+      "operator": "*",
+      "operand2": 5,
+      "answer": 135
+    },
+    {
+      "operand1": 70,
+      "operator": "+",
+      "operand2": 74,
+      "answer": 144
+    },
+    {
+      "operand1": 49,
+      "operator": "-",
+      "operand2": 12,
+      "answer": 37
+    },
+    {
+      "operand1": 76,
+      "operator": "-",
+      "operand2": 20,
+      "answer": 56
+    },
+    {
+      "operand1": 65,
+      "operator": "+",
+      "operand2": 98,
+      "answer": 163
+    },
+    {
+      "operand1": 90,
+      "operator": "*",
+      "operand2": 9,
+      "answer": 810
+    },
+    {
+      "operand1": 27,
+      "operator": "-",
+      "operand2": 14,
+      "answer": 13
+    },
+    {
+      "operand1": 13,
+      "operator": "+",
+      "operand2": 35,
+      "answer": 48
+    },
+    {
+      "operand1": 72,
+      "operator": "-",
+      "operand2": 46,
+      "answer": 26
+    },
+    {
+      "operand1": 39,
+      "operator": "*",
+      "operand2": 2,
+      "answer": 78
+    },
+    {
+      "operand1": 66,
+      "operator": "+",
+      "operand2": 31,
+      "answer": 97
+    },
+    {
+      "operand1": 91,
+      "operator": "-",
+      "operand2": 29,
+      "answer": 62
+    },
+    {
+      "operand1": 10,
+      "operator": "*",
+      "operand2": 4,
+      "answer": 40
+    },
+    {
+      "operand1": 41,
+      "operator": "-",
+      "operand2": 39,
+      "answer": 2
+    },
+    {
+      "operand1": 89,
+      "operator": "+",
+      "operand2": 90,
+      "answer": 179
+    },
+    {
+      "operand1": 41,
+      "operator": "+",
+      "operand2": 88,
+      "answer": 129
+    },
+    {
+      "operand1": 42,
+      "operator": "*",
+      "operand2": 1,
+      "answer": 42
+    },
+    {
+      "operand1": 97,
+      "operator": "-",
+      "operand2": 47,
+      "answer": 50
+    },
+    {
+      "operand1": 92,
+      "operator": "*",
+      "operand2": 0,
+      "answer": 0
+    },
+    {
+      "operand1": 59,
+      "operator": "+",
+      "operand2": 24,
+      "answer": 83
+    },
+    {
+      "operand1": 91,
+      "operator": "*",
+      "operand2": 7,
+      "answer": 637
+    },
+    {
+      "operand1": 62,
+      "operator": "-",
+      "operand2": 42,
+      "answer": 20
+    },
+    {
+      "operand1": 86,
+      "operator": "+",
+      "operand2": 85,
+      "answer": 171
+    },
+    {
+      "operand1": 32,
+      "operator": "*",
+      "operand2": 6,
+      "answer": 192
+    },
+    {
+      "operand1": 64,
+      "operator": "-",
+      "operand2": 11,
+      "answer": 53
+    },
+    {
+      "operand1": 41,
+      "operator": "+",
+      "operand2": 30,
+      "answer": 71
+    },
+    {
+      "operand1": 95,
+      "operator": "*",
+      "operand2": 6,
+      "answer": 570
+    },
+    {
+      "operand1": 84,
+      "operator": "-",
+      "operand2": 16,
+      "answer": 68
+    },
+    {
+      "operand1": 19,
+      "operator": "+",
+      "operand2": 79,
+      "answer": 98
+    },
+    {
+      "operand1": 84,
+      "operator": "-",
+      "operand2": 11,
+      "answer": 73
+    },
+    {
+      "operand1": 79,
+      "operator": "*",
+      "operand2": 9,
+      "answer": 711
+    }
+  ],
+  "generated_at": "2026-04-30T10:09:59.813Z"
+}

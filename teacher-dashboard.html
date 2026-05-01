@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathLienLand — Teacher Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="page-dashboard">
+
+  <header>
+    <div style="min-width:160px;"></div>
+    <h1>MathLienLand</h1>
+    <div id="user-info">
+      <span id="teacher-name"></span>
+      <button id="btn-logout" onclick="logout()">Log out</button>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+    <h2 class="page-title">Teacher Dashboard</h2>
+
+    <!-- Create group form -->
+    <div class="teacher-card">
+      <h3 class="section-title">Create a new group</h3>
+      <form id="form-create-group" class="create-group-form">
+        <input type="text" id="group-name-input" placeholder="Group name (e.g. Class 3A)" required />
+        <button type="submit">Create group</button>
+      </form>
+      <p class="hint-text">Share the invite code with your students so they can join.</p>
+    </div>
+
+    <!-- Question generation -->
+    <div class="teacher-card">
+      <h3 class="section-title">Generate questions with AI</h3>
+      <p class="hint-text">Generate a new set of questions for a minigame using AI. Once activated, all students will receive these questions the next time they play that minigame.</p>
+      <div class="qgen-chips">
+        <button class="qgen-chip active" data-value="labyrinth">Labyrinth of Rule of Three</button>
+        <button class="qgen-chip" data-value="dividing-hills">Dividing Hills</button>
+        <button class="qgen-chip" data-value="decimal-meteors">Decimal System Meteors</button>
+        <button class="qgen-chip" data-value="endless-runner">Math Endless Runner</button>
+      </div>
+      <div class="qgen-controls">
+        <button id="qgen-btn" class="btn-ai-group" onclick="generateQuestions()">Generate with AI</button>
+      </div>
+      <div id="qgen-status" class="ai-summary-text" style="display:none;"></div>
+      <div id="qgen-preview" style="display:none;">
+        <div id="qgen-list" class="qgen-list"></div>
+        <button id="qgen-activate-btn" class="btn-ai-group" onclick="activateQuestions()">Activate for all students</button>
+      </div>
+    </div>
+
+    <!-- Groups and students -->
+    <div class="teacher-card">
+      <h3 class="section-title">My groups</h3>
+      <div id="teacher-group-selector" class="group-selector" style="display:none;"></div>
+      <div id="groups-container">
+        <p class="empty-text">Loading groups...</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/teacher-dashboard.js"></script>
+
+</body>
+</html>
