@@ -1,19 +1,45 @@
 // Pure functions for adaptive difficulty calculation.
 // Extracted here so they can be unit-tested without importing the full server.
 
+// Time thresholds (seconds) per minigame. Two boundaries define three bands:
+//   time <= fast              → correct answer scores 1.00
+//   fast < time <= slow       → correct answer scores 0.85
+//   time > slow               → correct answer scores 0.70
+//   incorrect (any time)      → scores 0.00
+const TIME_THRESHOLDS = {
+  'endless-runner':  { fast: 8,  slow: 13 },
+  'decimal-meteors': { fast: 10, slow: 15 },
+  'dividing-hills':  { fast: 10, slow: 18 },
+  'labyrinth':       { fast: 40, slow: 70 },
+};
+
+// Returns the weighted score for a single answer.
+// Falls back to binary (1.0 / 0.0) when time data is unavailable.
+function answerScore(answer, thresholds) {
+  if (!answer.correct) return 0;
+  if (!thresholds || answer.time == null) return 1.0;
+  if (answer.time <= thresholds.fast) return 1.0;
+  if (answer.time > thresholds.slow)  return 0.70;
+  return 0.85;
+}
+
 /**
  * Calculates the new difficulty level (1-10) based on a student's recent answers.
+ * When a minigame is provided, correct answers are weighted by response time;
+ * otherwise falls back to plain accuracy (binary 1/0 per answer).
  *
- * @param {Array<{correct: boolean, difficulty: number}>} answers
+ * @param {Array<{correct: boolean, difficulty: number, time?: number}>} answers
  * @param {number} defaultLevel - used when no valid history exists (default 5)
+ * @param {string|null} minigame - used to look up time thresholds (optional)
  * @returns {number} new difficulty level, clamped to [1, 10]
  */
-function calculateAdaptiveLevel(answers, defaultLevel = 5) {
+function calculateAdaptiveLevel(answers, defaultLevel = 5, minigame = null) {
   if (!answers || answers.length === 0) return defaultLevel;
 
+  const thresholds = minigame ? (TIME_THRESHOLDS[minigame] ?? null) : null;
+
   const total = answers.length;
-  const correct = answers.filter(a => a.correct).length;
-  const accuracy = correct / total;
+  const weightedScore = answers.reduce((sum, a) => sum + answerScore(a, thresholds), 0) / total;
 
   const validDiffs = answers
     .map(a => a.difficulty)
@@ -23,8 +49,8 @@ function calculateAdaptiveLevel(answers, defaultLevel = 5) {
     ? Math.round(validDiffs.reduce((sum, d) => sum + d, 0) / validDiffs.length)
     : defaultLevel;
 
-  if (accuracy > 0.8)  return Math.min(currentLevel + 2, 10);
-  if (accuracy >= 0.6) return currentLevel;
+  if (weightedScore > 0.8)  return Math.min(currentLevel + 2, 10);
+  if (weightedScore >= 0.6) return currentLevel;
   return Math.max(currentLevel - 1, 1);
 }
 
@@ -59,4 +85,4 @@ function difficultyToParams(minigame, level) {
   }
 }
 
-module.exports = { calculateAdaptiveLevel, difficultyToParams };
+module.exports = { calculateAdaptiveLevel, difficultyToParams, TIME_THRESHOLDS, answerScore };

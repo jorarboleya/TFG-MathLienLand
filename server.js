@@ -539,16 +539,29 @@ app.get('/api/levels/:minigame', async (req, res) => {
 
 app.get('/api/adaptive-level/:minigame/:userId', async (req, res) => {
   const { minigame, userId } = req.params;
+  const { group_id: groupId } = req.query;
 
   if (!ALLOWED_MINIGAMES.includes(minigame)) {
     return res.status(400).json({ error: 'Unknown minigame' });
   }
 
-  const DEFAULT_LEVEL = 5;
+  const PRIVATE_DEFAULT = 5;
+  const ESO_DEFAULTS    = { 1: 3, 2: 5 };
 
   try {
-    // 1. Get the last 10 sessions for this user + minigame
-    const { data: sessions, error: sessErr } = await supabaseAdmin
+    // Resolve the starting difficulty for this context (group ESO level or private default)
+    let defaultLevel = PRIVATE_DEFAULT;
+    if (groupId) {
+      const { data: group } = await supabaseAdmin
+        .from('groups')
+        .select('eso_level')
+        .eq('id', groupId)
+        .single();
+      defaultLevel = ESO_DEFAULTS[group?.eso_level] ?? PRIVATE_DEFAULT;
+    }
+
+    // 1. Get the last 10 sessions for this user + minigame scoped to this context
+    let query = supabaseAdmin
       .from('sessions')
       .select('id')
       .eq('user_id', userId)
@@ -556,10 +569,13 @@ app.get('/api/adaptive-level/:minigame/:userId', async (req, res) => {
       .order('date', { ascending: false })
       .limit(10);
 
+    query = groupId ? query.eq('group_id', groupId) : query.is('group_id', null);
+
+    const { data: sessions, error: sessErr } = await query;
     if (sessErr) throw sessErr;
 
     if (!sessions || sessions.length === 0) {
-      return res.json({ difficulty_level: DEFAULT_LEVEL, ...difficultyToParams(minigame, DEFAULT_LEVEL) });
+      return res.json({ difficulty_level: defaultLevel, ...difficultyToParams(minigame, defaultLevel) });
     }
 
     const sessionIds = sessions.map(s => s.id);
@@ -567,25 +583,21 @@ app.get('/api/adaptive-level/:minigame/:userId', async (req, res) => {
     // 2. Get all answers for those sessions
     const { data: answers, error: ansErr } = await supabaseAdmin
       .from('answers')
-      .select('correct, difficulty')
+      .select('correct, difficulty, time')
       .in('session_id', sessionIds);
 
     if (ansErr) throw ansErr;
 
     if (!answers || answers.length === 0) {
-      return res.json({ difficulty_level: DEFAULT_LEVEL, ...difficultyToParams(minigame, DEFAULT_LEVEL) });
+      return res.json({ difficulty_level: defaultLevel, ...difficultyToParams(minigame, defaultLevel) });
     }
 
-    // 3-5. Calculate new difficulty level using the adaptive algorithm
-    const newLevel = calculateAdaptiveLevel(answers, DEFAULT_LEVEL);
-
-    // 6. Return difficulty_level + minigame-specific params
+    const newLevel = calculateAdaptiveLevel(answers, defaultLevel, minigame);
     res.json({ difficulty_level: newLevel, ...difficultyToParams(minigame, newLevel) });
 
   } catch (err) {
     console.error('[adaptive-level] error:', err.message);
-    // On any error, return safe defaults so the game is never blocked
-    res.json({ difficulty_level: DEFAULT_LEVEL, ...difficultyToParams(minigame, DEFAULT_LEVEL) });
+    res.json({ difficulty_level: PRIVATE_DEFAULT, ...difficultyToParams(minigame, PRIVATE_DEFAULT) });
   }
 });
 
@@ -804,6 +816,38 @@ app.get('/api/groups/:groupId/export/answers', async (req, res) => {
   } catch (err) {
     console.error('[export/answers] error:', err.message);
     res.status(500).json({ error: 'Export failed' });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Delete group — DELETE /api/groups/:groupId
+// Removes answers → sessions → group (cascades group_members).
+// ---------------------------------------------------------------------------
+
+app.delete('/api/groups/:groupId', async (req, res) => {
+  const { groupId } = req.params;
+  const group = await verifyTeacherGroupAccess(req, res, groupId);
+  if (!group) return;
+
+  try {
+    const { data: sessions } = await supabaseAdmin
+      .from('sessions')
+      .select('id')
+      .eq('group_id', groupId);
+
+    const sessionIds = (sessions ?? []).map(s => s.id);
+
+    if (sessionIds.length > 0) {
+      await supabaseAdmin.from('answers').delete().in('session_id', sessionIds);
+    }
+
+    await supabaseAdmin.from('sessions').delete().eq('group_id', groupId);
+    await supabaseAdmin.from('groups').delete().eq('id', groupId);
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[delete-group] error:', err.message);
+    res.status(500).json({ error: 'Failed to delete group' });
   }
 });
 

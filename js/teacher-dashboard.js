@@ -24,6 +24,35 @@
   const groupStatsCache = {};
   const studentStatsMapCache = {};
 
+  function getInactivitySettings() {
+    const enabled = localStorage.getItem('ml_inactivity_enabled') !== 'false';
+    const days = Math.max(1, parseInt(localStorage.getItem('ml_inactivity_days') ?? '7', 10) || 7);
+    return { enabled, days };
+  }
+
+  function initAlertSettings() {
+    const { enabled, days } = getInactivitySettings();
+    const toggle    = document.getElementById('inactivity-alert-enabled');
+    const daysInput = document.getElementById('inactivity-alert-days');
+
+    toggle.checked    = enabled;
+    daysInput.value   = days;
+    daysInput.disabled = !enabled;
+
+    toggle.addEventListener('change', () => {
+      localStorage.setItem('ml_inactivity_enabled', toggle.checked);
+      daysInput.disabled = !toggle.checked;
+      loadGroups();
+    });
+
+    daysInput.addEventListener('change', () => {
+      const val = Math.max(1, parseInt(daysInput.value, 10) || 7);
+      daysInput.value = val;
+      localStorage.setItem('ml_inactivity_days', String(val));
+      loadGroups();
+    });
+  }
+
   window.logout = async function () {
     await db.auth.signOut();
     window.location.href = 'auth.html';
@@ -37,13 +66,15 @@
   });
 
   await loadGroups();
+  initAlertSettings();
 
   document.getElementById('form-create-group').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('group-name-input').value.trim();
     if (!name) return;
+    const esoLevel = parseInt(document.getElementById('group-eso-input').value, 10);
 
-    const { error } = await db.from('groups').insert({ teacher_id: teacherId, name });
+    const { error } = await db.from('groups').insert({ teacher_id: teacherId, name, eso_level: esoLevel });
     if (error) {
       console.error('Error creating group:', error);
       return;
@@ -65,7 +96,7 @@
   async function loadGroups() {
     const { data: groups } = await db
       .from('groups')
-      .select('id, name')
+      .select('id, name, eso_level')
       .eq('teacher_id', teacherId)
       .order('name');
 
@@ -91,6 +122,7 @@
     });
 
     for (const group of groups) {
+      const esoLabel = group.eso_level === 1 ? '1º ESO' : '2º ESO';
       const section = document.createElement('div');
       section.className = 'group-section';
       section.id = `group-section-${group.id}`;
@@ -98,7 +130,11 @@
       section.innerHTML = `
         <div class="group-header">
           <h3>${group.name}</h3>
-          <span class="group-code">Invite code: <strong>${group.id.slice(0, 8).toUpperCase()}</strong></span>
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <span class="eso-badge">${esoLabel}</span>
+            <span class="group-code">Invite code: <strong>${group.id.slice(0, 8).toUpperCase()}</strong></span>
+            <button class="btn-delete-group" onclick="deleteGroup('${group.id}', '${group.name.replace(/'/g, "\\'")}')">Delete group</button>
+          </div>
         </div>
         <div id="students-${group.id}" class="students-container">Loading...</div>
       `;
@@ -723,13 +759,14 @@
     }
 
     //inactivity check
-    if (studentSessions.length > 0) {
+    const { enabled: inactivityEnabled, days: inactivityDays } = getInactivitySettings();
+    if (inactivityEnabled && studentSessions.length > 0) {
       const lastDate = studentSessions.reduce(
         (latest, s) => new Date(s.date) > new Date(latest) ? s.date : latest,
         studentSessions[0].date
       );
       const daysSince = Math.floor((Date.now() - new Date(lastDate)) / (1000 * 60 * 60 * 24));
-      if (daysSince >= 7) {
+      if (daysSince >= inactivityDays) {
         negativeAlerts.push({ level: 'warning', message: `Last session ${daysSince} day${daysSince !== 1 ? 's' : ''} ago` });
       }
     }
@@ -800,6 +837,38 @@
       }
     });
   }
+
+  let pendingDeleteGroupId = null;
+
+  window.deleteGroup = function (groupId, groupName) {
+    pendingDeleteGroupId = groupId;
+    document.getElementById('delete-group-name').textContent = groupName;
+    document.getElementById('leave-modal').style.display = 'flex';
+  };
+
+  document.getElementById('leave-modal-cancel').addEventListener('click', () => {
+    document.getElementById('leave-modal').style.display = 'none';
+    pendingDeleteGroupId = null;
+  });
+
+  document.getElementById('leave-modal-confirm').addEventListener('click', async () => {
+    if (!pendingDeleteGroupId) return;
+    const groupId = pendingDeleteGroupId;
+    document.getElementById('leave-modal').style.display = 'none';
+    pendingDeleteGroupId = null;
+
+    const { data: { session } } = await db.auth.getSession();
+    const res = await fetch(`/api/groups/${groupId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${session.access_token}` }
+    });
+
+    if (res.ok) {
+      await loadGroups();
+    } else {
+      alert('Error deleting group. Please try again.');
+    }
+  });
 
   function renderLineChart(canvasId, labels, data, opts) {
     const ctx = document.getElementById(canvasId).getContext('2d');

@@ -95,6 +95,8 @@ function isValidQuestion(minigame, q) {
       }
 
       case 'labyrinth': {
+        if (!q.question || typeof q.question !== 'string') return false;
+        if (!Number.isInteger(q.difficulty) || q.difficulty < 1 || q.difficulty > 10) return false;
         const keys = ['answerA', 'answerB', 'answerC', 'answerD'];
         if (!keys.every(k => Array.isArray(q[k]) && q[k].length === 2)) return false;
         const trueCount = keys.filter(k => q[k][1] === true).length;

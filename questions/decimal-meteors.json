@@ -1,33 +1,33 @@
 {
   "questions": [
     {
-      "question": "500mg",
-      "value": 0.5,
-      "unit": "g"
-    },
-    {
       "question": "250mg",
       "value": 0.25,
       "unit": "g"
     },
     {
-      "question": "125mg",
-      "value": 0.125,
+      "question": "10mg",
+      "value": 0.01,
       "unit": "g"
     },
     {
-      "question": "1000mg",
-      "value": 1,
+      "question": "5mg",
+      "value": 0.005,
       "unit": "g"
     },
     {
-      "question": "0.75g",
-      "value": 750,
+      "question": "1g",
+      "value": 1000,
       "unit": "mg"
     },
     {
-      "question": "0.02g",
-      "value": 20,
+      "question": "0.05g",
+      "value": 50,
+      "unit": "mg"
+    },
+    {
+      "question": "0.002g",
+      "value": 2,
       "unit": "mg"
     },
     {
@@ -36,13 +36,23 @@
       "unit": "kg"
     },
     {
-      "question": "50g",
-      "value": 0.05,
+      "question": "10g",
+      "value": 0.01,
       "unit": "kg"
     },
     {
-      "question": "0.2kg",
-      "value": 200,
+      "question": "200g",
+      "value": 0.2,
+      "unit": "kg"
+    },
+    {
+      "question": "0.5kg",
+      "value": 500,
+      "unit": "g"
+    },
+    {
+      "question": "0.01kg",
+      "value": 10,
       "unit": "g"
     },
     {
@@ -51,54 +61,24 @@
       "unit": "g"
     },
     {
-      "question": "500ml",
-      "value": 0.5,
-      "unit": "l"
+      "question": "1000mg",
+      "value": 0.001,
+      "unit": "kg"
     },
     {
-      "question": "100ml",
+      "question": "0.001kg",
+      "value": 1000,
+      "unit": "mg"
+    },
+    {
+      "question": "25mm",
+      "value": 2.5,
+      "unit": "cm"
+    },
+    {
+      "question": "1mm",
       "value": 0.1,
-      "unit": "l"
-    },
-    {
-      "question": "20ml",
-      "value": 0.02,
-      "unit": "l"
-    },
-    {
-      "question": "1000ml",
-      "value": 1,
-      "unit": "l"
-    },
-    {
-      "question": "0.75l",
-      "value": 750,
-      "unit": "ml"
-    },
-    {
-      "question": "0.002l",
-      "value": 2,
-      "unit": "ml"
-    },
-    {
-      "question": "250l",
-      "value": 0.25,
-      "unit": "kl"
-    },
-    {
-      "question": "10l",
-      "value": 0.01,
-      "unit": "kl"
-    },
-    {
-      "question": "0.8kl",
-      "value": 800,
-      "unit": "l"
-    },
-    {
-      "question": "0.005kl",
-      "value": 5,
-      "unit": "l"
+      "unit": "cm"
     },
     {
       "question": "15mm",
@@ -106,33 +86,48 @@
       "unit": "cm"
     },
     {
-      "question": "75mm",
-      "value": 7.5,
-      "unit": "cm"
-    },
-    {
-      "question": "30mm",
-      "value": 3,
-      "unit": "cm"
-    },
-    {
-      "question": "1000mm",
-      "value": 100,
-      "unit": "cm"
-    },
-    {
-      "question": "2.5cm",
-      "value": 25,
+      "question": "5cm",
+      "value": 50,
       "unit": "mm"
     },
     {
-      "question": "0.8cm",
-      "value": 8,
+      "question": "0.5cm",
+      "value": 5,
       "unit": "mm"
     },
     {
-      "question": "100cm",
-      "value": 1000,
+      "question": "1.5cm",
+      "value": 15,
+      "unit": "mm"
+    },
+    {
+      "question": "120mm",
+      "value": 0.12,
+      "unit": "m"
+    },
+    {
+      "question": "50mm",
+      "value": 0.05,
+      "unit": "m"
+    },
+    {
+      "question": "150mm",
+      "value": 0.15,
+      "unit": "m"
+    },
+    {
+      "question": "0.7m",
+      "value": 700,
+      "unit": "mm"
+    },
+    {
+      "question": "0.005m",
+      "value": 5,
+      "unit": "mm"
+    },
+    {
+      "question": "0.15m",
+      "value": 150,
       "unit": "mm"
     },
     {
@@ -146,28 +141,23 @@
       "unit": "m"
     },
     {
-      "question": "3cm",
-      "value": 0.03,
+      "question": "15cm",
+      "value": 0.15,
       "unit": "m"
     },
     {
-      "question": "1000cm",
+      "question": "0.1m",
       "value": 10,
-      "unit": "m"
-    },
-    {
-      "question": "0.7m",
-      "value": 70,
       "unit": "cm"
     },
     {
-      "question": "1.2m",
-      "value": 120,
+      "question": "0.75m",
+      "value": 75,
       "unit": "cm"
     },
     {
-      "question": "0.01m",
-      "value": 1,
+      "question": "0.15m",
+      "value": 15,
       "unit": "cm"
     },
     {
@@ -176,69 +166,19 @@
       "unit": "km"
     },
     {
-      "question": "75m",
-      "value": 0.075,
-      "unit": "km"
-    },
-    {
-      "question": "1000m",
-      "value": 1,
-      "unit": "km"
-    },
-    {
-      "question": "0.3km",
-      "value": 300,
-      "unit": "m"
-    },
-    {
-      "question": "0.01km",
-      "value": 10,
-      "unit": "m"
-    },
-    {
-      "question": "1km",
-      "value": 1000,
-      "unit": "m"
-    },
-    {
-      "question": "250mm",
-      "value": 0.25,
-      "unit": "m"
-    },
-    {
-      "question": "10mm",
-      "value": 0.01,
-      "unit": "m"
-    },
-    {
-      "question": "1000mm",
-      "value": 1,
-      "unit": "m"
-    },
-    {
-      "question": "0.5m",
-      "value": 500,
-      "unit": "mm"
-    },
-    {
-      "question": "0.02m",
-      "value": 20,
-      "unit": "mm"
-    },
-    {
-      "question": "1m",
-      "value": 1000,
-      "unit": "mm"
-    },
-    {
-      "question": "1000cm",
+      "question": "10m",
       "value": 0.01,
       "unit": "km"
     },
     {
-      "question": "0.01km",
-      "value": 1000,
-      "unit": "cm"
+      "question": "0.75km",
+      "value": 750,
+      "unit": "m"
+    },
+    {
+      "question": "0.001km",
+      "value": 1,
+      "unit": "m"
     },
     {
       "question": "1000mm",
@@ -249,7 +189,77 @@
       "question": "0.001km",
       "value": 1000,
       "unit": "mm"
+    },
+    {
+      "question": "500cm",
+      "value": 0.005,
+      "unit": "km"
+    },
+    {
+      "question": "0.005km",
+      "value": 500,
+      "unit": "cm"
+    },
+    {
+      "question": "250ml",
+      "value": 0.25,
+      "unit": "l"
+    },
+    {
+      "question": "10ml",
+      "value": 0.01,
+      "unit": "l"
+    },
+    {
+      "question": "5ml",
+      "value": 0.005,
+      "unit": "l"
+    },
+    {
+      "question": "1l",
+      "value": 1000,
+      "unit": "ml"
+    },
+    {
+      "question": "0.05l",
+      "value": 50,
+      "unit": "ml"
+    },
+    {
+      "question": "0.002l",
+      "value": 2,
+      "unit": "ml"
+    },
+    {
+      "question": "750l",
+      "value": 0.75,
+      "unit": "kl"
+    },
+    {
+      "question": "10l",
+      "value": 0.01,
+      "unit": "kl"
+    },
+    {
+      "question": "0.5kl",
+      "value": 500,
+      "unit": "l"
+    },
+    {
+      "question": "0.01kl",
+      "value": 10,
+      "unit": "l"
+    },
+    {
+      "question": "1000ml",
+      "value": 0.001,
+      "unit": "kl"
+    },
+    {
+      "question": "0.001kl",
+      "value": 1000,
+      "unit": "ml"
     }
   ],
-  "generated_at": "2026-04-26T14:31:24.543Z"
+  "generated_at": "2026-05-01T09:38:23.018Z"
 }

@@ -168,6 +168,17 @@
       }
     };
 
+    window.getAdaptiveLevel = async function (minigame) {
+      try {
+        const groupParam = window.activeGroupId ? `?group_id=${encodeURIComponent(window.activeGroupId)}` : '';
+        const res = await fetch(`/api/adaptive-level/${minigame}/${window.currentUserId}${groupParam}`);
+        if (!res.ok) return {};
+        return res.json();
+      } catch (e) {
+        return {};
+      }
+    };
+
 
     const frame = document.getElementById('game-frame');
     const placeholder = document.getElementById('placeholder');
@@ -182,9 +193,10 @@
       } catch (e) {}
       //inject saveFullGame into the iframe so Godot can call it via JavaScript.eval
       try {
-        frame.contentWindow.saveFullGame = (data) => window.saveFullGame(data);
+        frame.contentWindow.saveFullGame    = (data) => window.saveFullGame(data);
+        frame.contentWindow.getAdaptiveLevel = (mg)   => window.getAdaptiveLevel(mg);
       } catch (e) {
-        console.error('Could not inject saveFullGame into iframe:', e);
+        console.error('Could not inject functions into iframe:', e);
       }
     });
 

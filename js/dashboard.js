@@ -143,7 +143,7 @@
     { id: 'ten_sessions',    name: 'Dedicated',        icon: '⭐', desc: 'Play 10 sessions' },
     { id: 'accuracy_master', name: 'Perfect Score',    icon: '🎯', desc: '100% accuracy in a session (min. 5 answers)' },
     { id: 'rising_star',     name: 'Rising Star',      icon: '🚀', desc: 'Reach difficulty level 8 in any minigame' },
-    { id: 'all_minigames',   name: 'Explorer',         icon: '🗺️', desc: 'Play all 6 minigames' },
+    { id: 'all_minigames',   name: 'AI Explorer',      icon: '🤖', desc: 'Play all 4 AI-powered minigames' },
     { id: 'comeback',        name: 'Comeback',         icon: '💪', desc: 'Improve accuracy by 20+ points vs previous session' },
     { id: 'week_player',     name: 'On a Roll',        icon: '🔥', desc: 'Play on 5 different days in the last 7 days' },
   ];
@@ -203,6 +203,7 @@
     activeGroupIdForStats = groupId;
     renderGroupSelector();
     renderDashboard(getGroupSessions(groupId));
+    renderAdaptiveLevelsChart(groupId);
   };
 
   window.switchDashTab = function (tab) {
@@ -212,9 +213,11 @@
     if (tab === 'private') {
       document.getElementById('group-selector').style.display = 'none';
       renderDashboard(privateSessions);
+      renderAdaptiveLevelsChart(null);
     } else {
       renderGroupSelector();
       renderDashboard(activeGroupIdForStats ? getGroupSessions(activeGroupIdForStats) : allGroupSessions);
+      renderAdaptiveLevelsChart(activeGroupIdForStats);
     }
   };
 
@@ -659,10 +662,13 @@
       }
     }
 
-    //all_minigames: played all 6 minigames at least once
+    //all_minigames: played all 4 AI-powered minigames at least once
     if (!earned.has('all_minigames')) {
-      const minigames = new Set(sessions.map(s => s.minigame).filter(Boolean));
-      if (minigames.size >= 6) { newlyEarned.push('all_minigames'); earned.add('all_minigames'); }
+      const AI_MINIGAMES = ['labyrinth', 'dividing-hills', 'decimal-meteors', 'endless-runner'];
+      const playedMinigames = new Set(sessions.map(s => s.minigame).filter(Boolean));
+      if (AI_MINIGAMES.every(m => playedMinigames.has(m))) {
+        newlyEarned.push('all_minigames'); earned.add('all_minigames');
+      }
     }
 
     //comeback: accuracy improves by 20+ points vs previous session in the same minigame
@@ -731,13 +737,14 @@
   }
 
 
-  async function renderAdaptiveLevelsChart() {
+  async function renderAdaptiveLevelsChart(groupId = null) {
     const MINIGAMES = ['labyrinth', 'dividing-hills', 'decimal-meteors', 'endless-runner'];
     const LABELS    = ['Labyrinth', 'Dividing Hills', 'Decimal Meteors', 'Endless Runner'];
 
+    const groupParam = groupId ? `?group_id=${encodeURIComponent(groupId)}` : '';
     const levels = await Promise.all(
       MINIGAMES.map(mg =>
-        fetch(`/api/adaptive-level/${mg}/${userId}`)
+        fetch(`/api/adaptive-level/${mg}/${userId}${groupParam}`)
           .then(r => r.json())
           .then(d => d.difficulty_level ?? 5)
           .catch(() => 5)
@@ -753,6 +760,9 @@
       return;
     }
 
+    if (chartInstances.adaptiveLevels) {
+      chartInstances.adaptiveLevels.destroy();
+    }
     chartInstances.adaptiveLevels = renderBarChart('chart-adaptive-levels', LABELS, levels, {
       label: 'Current difficulty level',
       color: 'rgba(245, 158, 11, 0.8)',

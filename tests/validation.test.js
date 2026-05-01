@@ -227,6 +227,7 @@ describe('isValidQuestion — labyrinth', () => {
     answerB: ['350 km', true],
     answerC: ['400 km', false],
     answerD: ['250 km', false],
+    difficulty: 3,
   };
 
   it('valid: exactly one true answer, 4 distinct texts', () => {
@@ -255,6 +256,26 @@ describe('isValidQuestion — labyrinth', () => {
 
   it('invalid: answer value is not an array', () => {
     const q = { ...validQ, answerA: '300 km' };
+    assert.equal(isValidQuestion('labyrinth', q), false);
+  });
+
+  it('invalid: missing question field', () => {
+    const { question: _, ...q } = validQ;
+    assert.equal(isValidQuestion('labyrinth', q), false);
+  });
+
+  it('invalid: difficulty out of range (11)', () => {
+    const q = { ...validQ, difficulty: 11 };
+    assert.equal(isValidQuestion('labyrinth', q), false);
+  });
+
+  it('invalid: difficulty is not an integer (float)', () => {
+    const q = { ...validQ, difficulty: 3.5 };
+    assert.equal(isValidQuestion('labyrinth', q), false);
+  });
+
+  it('invalid: missing difficulty field', () => {
+    const { difficulty: _, ...q } = validQ;
     assert.equal(isValidQuestion('labyrinth', q), false);
   });
 
