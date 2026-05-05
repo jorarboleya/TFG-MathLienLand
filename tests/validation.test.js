@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { gcd, isValidQuestion, filterValidQuestions } = require('../validation');
+const { gcd, isValidQuestion, filterValidQuestions } = require('../src/validation');
 
 // =============================================================================
 // gcd

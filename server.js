@@ -5,8 +5,8 @@ const path = require('path');
 const fs = require('fs');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { createClient } = require('@supabase/supabase-js');
-const { calculateAdaptiveLevel, difficultyToParams } = require('./adaptive');
-const { filterValidQuestions } = require('./validation');
+const { calculateAdaptiveLevel, difficultyToParams } = require('./src/adaptive');
+const { filterValidQuestions } = require('./src/validation');
 const rateLimit = require('express-rate-limit');
 
 const app = express();
@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 // Servir archivos estáticos
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ---------------------------------------------------------------------------
 // Helpers

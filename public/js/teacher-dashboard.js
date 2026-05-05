@@ -133,11 +133,12 @@
           <div style="display:flex;align-items:center;gap:0.75rem;">
             <span class="eso-badge">${esoLabel}</span>
             <span class="group-code">Invite code: <strong>${group.id.slice(0, 8).toUpperCase()}</strong></span>
-            <button class="btn-delete-group" onclick="deleteGroup('${group.id}', '${group.name.replace(/'/g, "\\'")}')">Delete group</button>
+            <button class="btn-delete-group">Delete group</button>
           </div>
         </div>
         <div id="students-${group.id}" class="students-container">Loading...</div>
       `;
+      section.querySelector('.btn-delete-group').addEventListener('click', () => deleteGroup(group.id, group.name));
       container.appendChild(section);
       loadGroupStudents(group.id);
     }
@@ -364,7 +365,7 @@
           <td>${badgeCountMap[student.id] ?? 0}</td>
           <td style="display:flex;gap:6px;">
             <button class="btn-remove" onclick="removeStudent('${student.id}', '${groupId}')">Remove</button>
-            <button class="btn-ai-student" onclick="requestStudentSummary('${student.id}', '${groupId}', '${student.name.replace(/'/g, "\\'")}')">AI</button>
+            <button class="btn-ai-student" data-student-id="${student.id}" data-group-id="${groupId}">AI</button>
           </td>
         </tr>
         <tr class="student-ai-row" id="ai-row-${student.id}-${groupId}" style="display:none;">
@@ -416,6 +417,12 @@
     `;
 
     container.innerHTML = alertsHTML + tableHTML + chartsHTML + aiCardHTML + exportHTML;
+
+    container.querySelectorAll('.btn-ai-student').forEach(btn => {
+      const sid = btn.dataset.studentId;
+      const gid = btn.dataset.groupId;
+      btn.addEventListener('click', () => requestStudentSummary(sid, gid, nameMap[sid]));
+    });
 
     loadCachedSummary(groupId, `group-${groupId}`,
       `ai-group-content-${groupId}`, `btn-ai-group-${groupId}`);
@@ -524,7 +531,7 @@
 
     const row     = document.getElementById(`ai-row-${studentId}-${groupId}`);
     const content = document.getElementById(`ai-content-${studentId}-${groupId}`);
-    const btn     = document.querySelector(`button[onclick="requestStudentSummary('${studentId}', '${groupId}', '${studentName.replace(/'/g, "\\'")}')"]`);
+    const btn     = document.querySelector(`button.btn-ai-student[data-student-id="${studentId}"][data-group-id="${groupId}"]`);
 
     row.style.display = '';
     btn.disabled = true;

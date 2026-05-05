@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { calculateAdaptiveLevel, difficultyToParams, TIME_THRESHOLDS, answerScore } = require('../adaptive');
+const { calculateAdaptiveLevel, difficultyToParams, TIME_THRESHOLDS, answerScore } = require('../src/adaptive');
 
 // Helper: builds an answer array with numCorrect correct answers out of numTotal,
 // all at the given difficulty level.

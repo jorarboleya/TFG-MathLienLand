@@ -4,7 +4,7 @@ const path = require('path');
 
 const OID = '0da9435de56e5a7e8865848e4be2d744fb6b46907c94d66925c5a069186d0dbb';
 const SIZE = 115648544;
-const PCK_PATH = path.join(__dirname, '..', 'game', 'index.pck');
+const PCK_PATH = path.join(__dirname, '..', 'public', 'game', 'index.pck');
 
 // Skip if already a real file (not a pointer)
 if (fs.existsSync(PCK_PATH) && fs.statSync(PCK_PATH).size > 1024 * 1024) {
