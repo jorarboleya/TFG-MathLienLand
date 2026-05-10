@@ -1,16 +1,17 @@
 // Pure functions for adaptive difficulty calculation.
 // Extracted here so they can be unit-tested without importing the full server.
 
-// Time thresholds (seconds) per minigame. Two boundaries define three bands:
-//   time <= fast              → correct answer scores 1.00
-//   fast < time <= slow       → correct answer scores 0.85
-//   time > slow               → correct answer scores 0.70
-//   incorrect (any time)      → scores 0.00
+// Time thresholds (seconds) per minigame. Three boundaries define four bands:
+//   time <= fast                        → correct answer scores 1.00
+//   fast < time <= slow                 → correct answer scores 0.85
+//   slow < time <= very_slow            → correct answer scores 0.70
+//   time > very_slow                    → correct answer scores 0.50
+//   incorrect (any time)                → scores 0.00
 const TIME_THRESHOLDS = {
-  'endless-runner':  { fast: 8,  slow: 13 },
-  'decimal-meteors': { fast: 10, slow: 15 },
-  'dividing-hills':  { fast: 10, slow: 18 },
-  'labyrinth':       { fast: 40, slow: 70 },
+  'endless-runner':  { fast: 8,  slow: 13, very_slow: 22  },
+  'decimal-meteors': { fast: 10, slow: 15, very_slow: 30  },
+  'dividing-hills':  { fast: 10, slow: 18, very_slow: 30  },
+  'labyrinth':       { fast: 40, slow: 70, very_slow: 100 },
 };
 
 // Returns the weighted score for a single answer.
@@ -18,9 +19,10 @@ const TIME_THRESHOLDS = {
 function answerScore(answer, thresholds) {
   if (!answer.correct) return 0;
   if (!thresholds || answer.time == null) return 1.0;
-  if (answer.time <= thresholds.fast) return 1.0;
-  if (answer.time > thresholds.slow)  return 0.70;
-  return 0.85;
+  if (answer.time <= thresholds.fast)      return 1.0;
+  if (answer.time <= thresholds.slow)      return 0.85;
+  if (answer.time <= thresholds.very_slow) return 0.70;
+  return 0.50;
 }
 
 /**

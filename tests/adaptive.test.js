@@ -271,7 +271,7 @@ describe('difficultyToParams — decimal-meteors', () => {
 
 describe('answerScore', () => {
 
-  const th = TIME_THRESHOLDS['endless-runner']; // fast ≤ 8, slow > 13
+  const th = TIME_THRESHOLDS['endless-runner']; // fast ≤ 8, slow ≤ 13, very_slow ≤ 22
 
   it('incorrect answer always scores 0 regardless of time', () => {
     assert.equal(answerScore({ correct: false, time: 1 },    th), 0);
@@ -299,8 +299,12 @@ describe('answerScore', () => {
     assert.equal(answerScore({ correct: true, time: 14 }, th), 0.70);
   });
 
-  it('correct + slow (far above threshold) scores 0.70', () => {
-    assert.equal(answerScore({ correct: true, time: 60 }, th), 0.70);
+  it('correct + slow (within slow band, below very_slow) scores 0.70', () => {
+    assert.equal(answerScore({ correct: true, time: 20 }, th), 0.70);
+  });
+
+  it('correct + very slow (above very_slow threshold) scores 0.50', () => {
+    assert.equal(answerScore({ correct: true, time: 60 }, th), 0.50);
   });
 
   it('correct with no time falls back to 1.0', () => {
@@ -359,10 +363,10 @@ describe('calculateAdaptiveLevel — time-weighted (endless-runner)', () => {
   });
 
   it('time thresholds are specific to the minigame (labyrinth fast ≤ 40)', () => {
-    // time=30 is fast for labyrinth but slow for endless-runner
+    // time=30 is fast for labyrinth but very_slow for endless-runner
     const answers = Array.from({ length: 10 }, () => ({ correct: true, difficulty: 5, time: 30 }));
     assert.equal(calculateAdaptiveLevel(answers, 5, 'labyrinth'),       7); // 30 ≤ 40 → fast → score 1.0 → +2
-    assert.equal(calculateAdaptiveLevel(answers, 5, 'endless-runner'),  5); // 30 > 13 → slow → score 0.70 → maintain
+    assert.equal(calculateAdaptiveLevel(answers, 5, 'endless-runner'),  4); // 30 > 22 → very_slow → score 0.50 → -1
   });
 
 });

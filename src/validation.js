@@ -74,7 +74,7 @@ function isValidQuestion(minigame, q) {
         const type = Number(q.type);
 
         if (type === 0) {
-          const match = String(q.text).match(/Is (\d+) divisible by\s*\n?(\d+)\?/i);
+          const match = String(q.text).match(/Is (\d+) divisible by[\s\n]+(\d+)\?/i);
           if (!match) return false;
           const num      = parseInt(match[1]);
           const divisor  = parseInt(match[2]);
