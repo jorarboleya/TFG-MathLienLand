@@ -1,91 +1,91 @@
 # MathLienLand
 
-Plataforma educativa de matemáticas que combina seis minijuegos desarrollados en Godot Engine con generación automática de preguntas mediante IA, dificultad adaptativa y paneles de seguimiento para alumnos y profesores.
+An educational math platform combining six Godot Engine minigames with AI-powered question generation, adaptive difficulty, and dashboards for students and teachers.
 
-Desarrollado como Trabajo de Fin de Grado en la Facultad de Informática de la Universidad Complutense de Madrid (FDI UCM).
+Built as a Final Degree Project (TFG) at the Faculty of Computer Science, Universidad Complutense de Madrid (FDI UCM).
 
-**Demo en producción:** https://tfg-mathlienland.onrender.com
+**Live demo:** https://tfg-mathlienland.onrender.com
 
-> El servidor usa el tier gratuito de Render y entra en reposo tras 15 minutos de inactividad. La primera petición puede tardar ~1 minuto en responderse mientras arranca.
-
----
-
-## Funcionalidades
-
-- **6 minijuegos** de matemáticas (fracciones, regla de tres, divisibilidad, sistema métrico, operaciones aritméticas, funciones) exportados a HTML5 desde Godot 4
-- **Generación de preguntas con IA** para 4 de los 6 minijuegos usando Google Gemini, con validación matemática automática
-- **Dificultad adaptativa** por alumno y por contexto (grupo o sesión privada), basada en precisión y tiempo de respuesta
-- **Dashboard del alumno** con estadísticas, gráficas, análisis IA personalizado y sistema de logros
-- **Dashboard del profesor** con tabla de alumnos, gráficas comparativas, análisis IA grupal e individual, alertas de rendimiento y exportación CSV
-- **113 tests automatizados** para el algoritmo adaptativo y el validador matemático (`npm test`)
+> The server runs on Render's free tier and goes to sleep after 15 minutes of inactivity. The first request after an idle period may take ~1 minute to respond while the server wakes up.
 
 ---
 
-## Stack
+## Features
 
-| Capa | Tecnología |
+- **6 math minigames** (fractions, rule of three, divisibility, metric system, arithmetic, functions) exported to HTML5 from Godot 4
+- **AI-powered question generation** for 4 of the 6 minigames using Google Gemini, with automatic mathematical validation
+- **Adaptive difficulty** per student and per context (group session or private session), based on accuracy and response time
+- **Student dashboard** with statistics, charts, AI-generated personalized analysis and an achievement system
+- **Teacher dashboard** with student table, comparative charts, group and individual AI analysis, performance alerts and CSV export
+- **113 automated tests** for the adaptive algorithm and the mathematical validator (`npm test`)
+
+---
+
+## Tech stack
+
+| Layer | Technology |
 |---|---|
-| Servidor | Node.js + Express |
-| Base de datos | Supabase (PostgreSQL + RLS) |
-| Minijuegos | Godot 4 (export HTML5 / WebAssembly) |
-| IA | Google Gemini 2.5 Flash |
-| Frontend | HTML + CSS + JavaScript (vanilla) |
-| Gráficas | Chart.js |
-| Despliegue | Render |
-| Keep-alive BD | GitHub Actions |
+| Server | Node.js + Express |
+| Database | Supabase (PostgreSQL + RLS) |
+| Minigames | Godot 4 (HTML5 / WebAssembly export) |
+| AI | Google Gemini 2.5 Flash |
+| Frontend | HTML + CSS + Vanilla JavaScript |
+| Charts | Chart.js |
+| Deployment | Render |
+| Database keep-alive | GitHub Actions |
 
 ---
 
-## Estructura del proyecto
+## Project structure
 
 ```
-server.js              # Servidor Express principal
+server.js                  # Main Express server
 src/
-  adaptive.js          # Algoritmo de dificultad adaptativa
-  validation.js        # Validador matemático de preguntas generadas por IA
+  adaptive.js              # Adaptive difficulty algorithm
+  validation.js            # Mathematical validator for AI-generated questions
 public/
-  auth.html            # Registro e inicio de sesión
-  game.html            # Página del juego (iframe con Godot)
-  dashboard.html       # Panel del alumno
-  teacher-dashboard.html  # Panel del profesor
-  game/                # Build HTML5 de Godot (WebAssembly)
-  js/                  # Lógica del frontend
-  css/                 # Estilos
-questions/             # Caché de preguntas generadas por Gemini (JSON)
-sql/                   # Scripts SQL del esquema de Supabase
+  auth.html                # Login and registration
+  game.html                # Game page (Godot iframe)
+  dashboard.html           # Student dashboard
+  teacher-dashboard.html   # Teacher dashboard
+  game/                    # Godot HTML5 build (WebAssembly)
+  js/                      # Frontend logic
+  css/                     # Styles
+questions/                 # Gemini-generated question cache (JSON)
+sql/                       # Supabase schema SQL scripts
 tests/
-  adaptive.test.js     # 59 tests del algoritmo adaptativo
-  validation.test.js   # 54 tests del validador matemático
+  adaptive.test.js         # 59 tests for the adaptive algorithm
+  validation.test.js       # 54 tests for the mathematical validator
 ```
 
 ---
 
-## Configuración local
+## Local setup
 
-### Requisitos
+### Requirements
 
 - Node.js 18+
-- Cuenta en [Supabase](https://supabase.com) con el esquema aplicado (ver `sql/`)
-- API key de [Google AI Studio](https://aistudio.google.com)
+- A [Supabase](https://supabase.com) project with the schema applied (see `sql/`)
+- An API key from [Google AI Studio](https://aistudio.google.com)
 
-### Variables de entorno
+### Environment variables
 
-Crea un archivo `.env` en la raíz del proyecto:
+Create a `.env` file in the project root:
 
 ```
-SUPABASE_URL=https://<tu-proyecto>.supabase.co
+SUPABASE_URL=https://<your-project>.supabase.co
 SUPABASE_SERVICE_KEY=<service-role-key>
-GEMINI_API_KEY=<tu-api-key>
+GEMINI_API_KEY=<your-api-key>
 ```
 
-### Arrancar
+### Run
 
 ```bash
 npm install
 npm start
 ```
 
-### Tests
+### Test
 
 ```bash
 npm test
@@ -93,13 +93,13 @@ npm test
 
 ---
 
-## Minijuegos y compatibilidad con IA
+## Minigames and AI compatibility
 
-| Minijuego | Generación IA | Dificultad adaptativa |
-|---|---|---|
-| Fraction Race | No (contenido en imágenes) | No |
-| Labyrinth of Rule of Three | Sí | Sí |
-| Dividing Hills | Sí | Sí |
-| Decimal System Meteors | Sí | Sí |
-| Math Endless Runner | Sí | Sí |
-| Function Memory | No (contenido en imágenes) | No |
+| Minigame | AI generation & adaptive difficulty |
+|---|---|
+| Fraction Race | No (image-based content) |
+| Labyrinth of Rule of Three | Yes |
+| Dividing Hills | Yes |
+| Decimal System Meteors | Yes |
+| Math Endless Runner | Yes |
+| Function Memory | No (image-based content) |
