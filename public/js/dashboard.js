@@ -145,7 +145,7 @@
     { id: 'rising_star',     name: 'Rising Star',      icon: '🚀', desc: 'Reach difficulty level 8 in any minigame' },
     { id: 'all_minigames',   name: 'AI Explorer',      icon: '🤖', desc: 'Play all 4 AI-powered minigames' },
     { id: 'comeback',        name: 'Comeback',         icon: '💪', desc: 'Improve accuracy by 20+ points vs previous session' },
-    { id: 'week_player',     name: 'On a Roll',        icon: '🔥', desc: 'Play on 5 different days in the last 7 days' },
+    { id: 'week_player',     name: 'On a Roll',        icon: '🔥', desc: 'Get above 90% accuracy in 3 consecutive sessions in the same minigame (min. 3 answers each)' },
   ];
 
   const privateSessions  = allSessions.filter(s => !s.group_id);
@@ -696,15 +696,30 @@
       }
     }
 
-    //week_player: sessions on at least 5 distinct days in the last 7 days
+    //week_player (On a Roll): 3 consecutive sessions >90% accuracy in the same minigame
     if (!earned.has('week_player')) {
-      const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
-      const recentDays = new Set(
-        sessions
-          .filter(s => s.date && new Date(s.date).getTime() >= cutoff)
-          .map(s => new Date(s.date).toISOString().slice(0, 10))
-      );
-      if (recentDays.size >= 5) { newlyEarned.push('week_player'); earned.add('week_player'); }
+      const byMinigame = {};
+      for (const s of sessions) {
+        if (!s.minigame) continue;
+        if (!byMinigame[s.minigame]) byMinigame[s.minigame] = [];
+        byMinigame[s.minigame].push(s);
+      }
+      outer:
+      for (const mgs of Object.values(byMinigame)) {
+        const sorted = mgs.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+        let streak = 0;
+        for (const s of sorted) {
+          const ans = answersBySession[s.id] ?? [];
+          if (ans.length < 3) { streak = 0; continue; }
+          const acc = ans.filter(a => a.correct).length / ans.length * 100;
+          if (acc > 90) {
+            streak++;
+            if (streak >= 3) { newlyEarned.push('week_player'); earned.add('week_player'); break outer; }
+          } else {
+            streak = 0;
+          }
+        }
+      }
     }
 
     return newlyEarned;
