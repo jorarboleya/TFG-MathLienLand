@@ -721,7 +721,7 @@
         const correct = ['answerA', 'answerB', 'answerC', 'answerD'].find(k => q[k]?.[1]);
         text = `${q.question?.replace(/\n/g, ' ')} — ✓ ${q[correct]?.[0] ?? ''}`;
       } else if (minigame === 'dividing-hills') {
-        text = `[Type ${q.type}] ${q.text} — ✓ ${q.options?.[q.answer] ?? ''}`;
+        text = `${q.text} — ✓ ${q.options?.[q.answer] ?? ''}`;
       } else if (minigame === 'decimal-meteors') {
         text = `${q.question} → ${q.value} ${q.unit}`;
       } else if (minigame === 'endless-runner') {
