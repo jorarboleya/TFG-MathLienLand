@@ -56,6 +56,89 @@ async function withRetry(fn, maxAttempts = 3) {
   }
 }
 
+async function requireAuth(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const token = authHeader.slice(7);
+    const { data: { user }, error: authErr } = await supabaseAdmin.auth.getUser(token);
+    if (authErr || !user) {
+      return res.status(401).json({ error: 'Invalid or expired token' });
+    }
+
+    const { data: profile, error: profileErr } = await supabaseAdmin
+      .from('users')
+      .select('id, role, name')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (profileErr) {
+      console.error('[auth] profile lookup error:', profileErr.message);
+      return res.status(500).json({ error: 'Authentication lookup failed' });
+    }
+
+    if (!profile) {
+      return res.status(403).json({ error: 'User profile not found' });
+    }
+
+    req.auth = { user, profile };
+    next();
+  } catch (err) {
+    console.error('[auth] unexpected error:', err.message);
+    return res.status(500).json({ error: 'Authentication lookup failed' });
+  }
+}
+
+function requireRole(...roles) {
+  return (req, res, next) => {
+    if (!req.auth?.profile || !roles.includes(req.auth.profile.role)) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+    next();
+  };
+}
+
+async function getTeacherOwnedGroup(req, res, groupId) {
+  if (!groupId) {
+    res.status(400).json({ error: 'Missing groupId' });
+    return null;
+  }
+
+  const { data: group, error } = await supabaseAdmin
+    .from('groups')
+    .select('id, name, teacher_id, eso_level')
+    .eq('id', groupId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('[auth] group lookup error:', error.message);
+    res.status(500).json({ error: 'Database error' });
+    return null;
+  }
+
+  if (!group || group.teacher_id !== req.auth.user.id) {
+    res.status(403).json({ error: 'Access denied' });
+    return null;
+  }
+
+  return group;
+}
+
+async function isStudentInGroup(studentId, groupId) {
+  const { data, error } = await supabaseAdmin
+    .from('group_members')
+    .select('id')
+    .eq('student_id', studentId)
+    .eq('group_id', groupId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return !!data;
+}
+
 // Deterministic fallback summaries used when the Gemini API is unavailable.
 function buildFallbackStudentSummary({ accuracy, bestGame, bestAccuracy, worstGame, worstAccuracy }) {
   const best = bestGame ? `${bestGame}${bestAccuracy != null ? ` (${bestAccuracy}%)` : ''}` : 'your best minigame';
@@ -201,7 +284,7 @@ app.use('/api/ai', aiLimiter);
 
 // POST /api/ai/student-summary
 // Receives student stats and returns an AI-generated analysis paragraph
-app.post('/api/ai/student-summary', async (req, res) => {
+app.post('/api/ai/student-summary', requireAuth, requireRole('student'), async (req, res) => {
   const {
     sessions,
     accuracy,
@@ -278,8 +361,9 @@ Write a short paragraph (maximum 80 words) addressed directly to the student. Do
 
 // POST /api/ai/group-analysis
 // Receives group-level stats and returns an AI-generated analysis for the teacher
-app.post('/api/ai/group-analysis', async (req, res) => {
+app.post('/api/ai/group-analysis', requireAuth, requireRole('teacher'), async (req, res) => {
   const {
+    groupId,
     groupName,
     studentCount,
     totalSessions,
@@ -289,7 +373,12 @@ app.post('/api/ai/group-analysis', async (req, res) => {
     difficultyBreakdown
   } = req.body;
 
-  if (!groupName || groupAccuracy === undefined) {
+  const group = await getTeacherOwnedGroup(req, res, groupId);
+  if (!group) return;
+
+  const effectiveGroupName = group.name ?? groupName ?? 'Group';
+
+  if (groupAccuracy === undefined) {
     return res.status(400).json({ error: 'Missing required stats' });
   }
 
@@ -305,7 +394,7 @@ app.post('/api/ai/group-analysis', async (req, res) => {
         .join(', ')
     : 'no data';
 
-  const prompt = `You are an assistant helping a math teacher analyze their students' performance. The group "${groupName}" has the following data:
+  const prompt = `You are an assistant helping a math teacher analyze their students' performance. The group "${effectiveGroupName}" has the following data:
 - Number of students: ${studentCount}
 - Total sessions played by the group: ${totalSessions}
 - Group average accuracy: ${groupAccuracy}%
@@ -321,14 +410,16 @@ Write a short paragraph (maximum 80 words) addressed to the teacher. Identify wh
     res.json({ summary: result.response.text() });
   } catch (err) {
     console.error('Gemini API error:', err);
-    res.json({ summary: buildFallbackGroupAnalysis({ groupName, studentCount, groupAccuracy, minigameBreakdown, difficultyBreakdown }) });
+    res.json({ summary: buildFallbackGroupAnalysis({ groupName: effectiveGroupName, studentCount, groupAccuracy, minigameBreakdown, difficultyBreakdown }) });
   }
 });
 
 // POST /api/ai/student-summary-teacher
 // Receives individual student stats and returns a 3rd-person AI summary for the teacher
-app.post('/api/ai/student-summary-teacher', async (req, res) => {
+app.post('/api/ai/student-summary-teacher', requireAuth, requireRole('teacher'), async (req, res) => {
   const {
+    studentId,
+    groupId,
     studentName,
     sessions,
     accuracy,
@@ -340,6 +431,18 @@ app.post('/api/ai/student-summary-teacher', async (req, res) => {
     minigameStats,
     difficultyBreakdown
   } = req.body;
+
+  const group = await getTeacherOwnedGroup(req, res, groupId);
+  if (!group) return;
+
+  try {
+    if (!studentId || !(await isStudentInGroup(studentId, group.id))) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+  } catch (err) {
+    console.error('[student-summary-teacher] membership lookup error:', err.message);
+    return res.status(500).json({ error: 'Database error' });
+  }
 
   if (!studentName || sessions === undefined) {
     return res.status(400).json({ error: 'Missing required stats' });
@@ -455,7 +558,7 @@ async function autoGenerateIfNeeded(minigame) {
 
 // POST /api/ai/generate-questions/:minigame
 // Called from the teacher dashboard to force-regenerate questions for a minigame.
-app.post('/api/ai/generate-questions/:minigame', async (req, res) => {
+app.post('/api/ai/generate-questions/:minigame', requireAuth, requireRole('teacher'), async (req, res) => {
   const { minigame } = req.params;
   if (!MINIGAME_PROMPTS[minigame]) {
     return res.status(400).json({ error: `AI generation not supported for: ${minigame}` });
@@ -471,7 +574,7 @@ app.post('/api/ai/generate-questions/:minigame', async (req, res) => {
 
 // POST /api/levels/:minigame/activate
 // Called from the teacher dashboard to write a question set to disk.
-app.post('/api/levels/:minigame/activate', (req, res) => {
+app.post('/api/levels/:minigame/activate', requireAuth, requireRole('teacher'), (req, res) => {
   const { minigame } = req.params;
   if (!ALLOWED_MINIGAMES.includes(minigame)) {
     return res.status(400).json({ error: 'Unknown minigame' });
@@ -481,8 +584,12 @@ app.post('/api/levels/:minigame/activate', (req, res) => {
     return res.status(400).json({ error: 'Body must contain a questions array' });
   }
   try {
-    saveQuestionsToDisk(minigame, questions);
-    res.json({ success: true, count: questions.length });
+    const validQuestions = filterValidQuestions(minigame, questions);
+    if (validQuestions.length === 0) {
+      return res.status(400).json({ error: 'No valid questions to activate' });
+    }
+    saveQuestionsToDisk(minigame, validQuestions);
+    res.json({ success: true, count: validQuestions.length });
   } catch (err) {
     console.error('Error saving questions:', err);
     res.status(500).json({ error: 'Failed to save questions' });
@@ -492,8 +599,8 @@ app.post('/api/levels/:minigame/activate', (req, res) => {
 // ---------------------------------------------------------------------------
 // Question files — Phase 4 + 5
 // GET /api/levels/:minigame
-// Serves the questions JSON. For AI-supported minigames, generates on the fly
-// if the cache is empty (e.g. first request before startup generation finishes).
+// Serves the cached questions JSON. This endpoint remains public because the
+// Godot export consumes it directly, so it must not trigger Gemini generation.
 // Godot falls back to procedural generation if this returns {questions:[]}.
 // ---------------------------------------------------------------------------
 
@@ -515,17 +622,6 @@ app.get('/api/levels/:minigame', async (req, res) => {
     } catch { /* fall through to generation */ }
   }
 
-  // Cache empty or missing: generate now if AI-supported (covers first-run edge case)
-  if (MINIGAME_PROMPTS[minigame]) {
-    try {
-      const questions = await callGeminiForQuestions(minigame);
-      saveQuestionsToDisk(minigame, questions);
-      return res.json({ questions });
-    } catch (err) {
-      console.error(`[questions] on-demand generation failed for ${minigame}:`, err.message);
-    }
-  }
-
   // Fallback: Godot will use procedural generation
   res.json({ questions: [] });
 });
@@ -537,7 +633,7 @@ app.get('/api/levels/:minigame', async (req, res) => {
 // and returns difficulty parameters tailored to their current level.
 // ---------------------------------------------------------------------------
 
-app.get('/api/adaptive-level/:minigame/:userId', async (req, res) => {
+app.get('/api/adaptive-level/:minigame/:userId', requireAuth, async (req, res) => {
   const { minigame, userId } = req.params;
   const { group_id: groupId } = req.query;
 
@@ -549,16 +645,44 @@ app.get('/api/adaptive-level/:minigame/:userId', async (req, res) => {
   const ESO_DEFAULTS    = { 1: 3, 2: 5 };
 
   try {
+    let groupContext = null;
+    if (groupId) {
+      const { data: group, error: groupErr } = await supabaseAdmin
+        .from('groups')
+        .select('id, teacher_id, eso_level')
+        .eq('id', groupId)
+        .maybeSingle();
+
+      if (groupErr) {
+        console.error('[adaptive-level] group lookup error:', groupErr.message);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      if (!group) return res.status(404).json({ error: 'Group not found' });
+
+      let studentMember;
+      try {
+        studentMember = await isStudentInGroup(userId, groupId);
+      } catch (memberErr) {
+        console.error('[adaptive-level] membership lookup error:', memberErr.message);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      const ownLevel = req.auth.user.id === userId && studentMember;
+      const teacherLevel = req.auth.profile.role === 'teacher'
+        && group.teacher_id === req.auth.user.id
+        && studentMember;
+
+      if (!ownLevel && !teacherLevel) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+
+      groupContext = group;
+    } else if (req.auth.user.id !== userId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
     // Resolve the starting difficulty for this context (group ESO level or private default)
     let defaultLevel = PRIVATE_DEFAULT;
-    if (groupId) {
-      const { data: group } = await supabaseAdmin
-        .from('groups')
-        .select('eso_level')
-        .eq('id', groupId)
-        .single();
-      defaultLevel = ESO_DEFAULTS[group?.eso_level] ?? PRIVATE_DEFAULT;
-    }
+    if (groupContext) defaultLevel = ESO_DEFAULTS[groupContext.eso_level] ?? PRIVATE_DEFAULT;
 
     // 1. Get the last 10 sessions for this user + minigame scoped to this context
     let query = supabaseAdmin

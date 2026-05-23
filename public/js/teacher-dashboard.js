@@ -7,6 +7,11 @@
 
   const teacherId = session.user.id;
 
+  async function getAccessToken() {
+    const { data: { session: currentSession } } = await db.auth.getSession();
+    return currentSession?.access_token ?? session.access_token;
+  }
+
   const { data: teacher } = await db
     .from('users')
     .select('name, role')
@@ -498,10 +503,14 @@
     content.textContent = 'Generating analysis...';
 
     try {
+      const token = await getAccessToken();
       const res = await fetch('/api/ai/group-analysis', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ groupName, ...stats })
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ groupId, groupName, ...stats })
       });
       const data = await res.json();
 
@@ -560,10 +569,14 @@
     }
 
     try {
+      const token = await getAccessToken();
       const res = await fetch('/api/ai/student-summary-teacher', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentName, ...stats })
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ studentId, groupId, studentName, ...stats })
       });
       const data = await res.json();
 
@@ -640,9 +653,13 @@
     _pendingQuestions = null;
 
     try {
+      const token = await getAccessToken();
       const res = await fetch(`/api/ai/generate-questions/${minigame}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({})
       });
       const data = await res.json();
@@ -673,9 +690,13 @@
     btn.disabled = true;
 
     try {
+      const token = await getAccessToken();
       const res = await fetch(`/api/levels/${minigame}/activate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ questions })
       });
       const data = await res.json();

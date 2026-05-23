@@ -8,6 +8,11 @@
 
   const userId = session.user.id;
 
+  async function getAccessToken() {
+    const { data: { session: currentSession } } = await db.auth.getSession();
+    return currentSession?.access_token ?? session.access_token;
+  }
+
   const { data: profile } = await db
     .from('users')
     .select('name')
@@ -232,9 +237,13 @@
     content.textContent = 'Generating analysis...';
 
     try {
+      const token = await getAccessToken();
       const res = await fetch('/api/ai/student-summary', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(lastStats)
       });
       const data = await res.json();
@@ -757,9 +766,12 @@
     const LABELS    = ['Labyrinth', 'Dividing Hills', 'Decimal Meteors', 'Endless Runner'];
 
     const groupParam = groupId ? `?group_id=${encodeURIComponent(groupId)}` : '';
+    const token = await getAccessToken();
     const levels = await Promise.all(
       MINIGAMES.map(mg =>
-        fetch(`/api/adaptive-level/${mg}/${userId}${groupParam}`)
+        fetch(`/api/adaptive-level/${mg}/${userId}${groupParam}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
           .then(r => r.json())
           .then(d => d.difficulty_level ?? 5)
           .catch(() => 5)
