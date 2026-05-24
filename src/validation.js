@@ -2,12 +2,6 @@
 // Each minigame has its own validation logic; invalid questions are discarded
 // before the question set reaches the students.
 
-/**
- * Euclidean GCD algorithm.
- * @param {number} a
- * @param {number} b
- * @returns {number}
- */
 function gcd(a, b) {
   while (b !== 0) {
     const t = b;
@@ -25,21 +19,12 @@ const UNIT_TO_BASE = {
   ml: 1e-3, l: 1,    kl: 1e3,
 };
 
-// Units within the same family can be converted to each other.
 const UNIT_FAMILIES = [
   ['mg', 'g', 'kg'],
   ['mm', 'cm', 'm', 'km'],
   ['ml', 'l', 'kl'],
 ];
 
-/**
- * Returns true if the question is mathematically correct for the given minigame.
- * Returns false if the answer is wrong, the format is unexpected, or any field is missing.
- *
- * @param {string} minigame
- * @param {object} q
- * @returns {boolean}
- */
 function isValidQuestion(minigame, q) {
   try {
     switch (minigame) {
@@ -113,13 +98,6 @@ function isValidQuestion(minigame, q) {
   }
 }
 
-/**
- * Filters out mathematically invalid questions and logs how many were discarded.
- *
- * @param {string} minigame
- * @param {object[]} questions
- * @returns {object[]} only the valid questions
- */
 function filterValidQuestions(minigame, questions) {
   const valid = questions.filter(q => isValidQuestion(minigame, q));
   const discarded = questions.length - valid.length;

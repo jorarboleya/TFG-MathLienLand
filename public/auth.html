@@ -70,7 +70,6 @@
       window.location.href = usuario?.role === 'teacher' ? 'teacher-dashboard.html' : 'game.html';
     }
 
-    //Check session
     db.auth.getSession().then(({ data }) => {
       if (data.session) redirectByRole(data.session.user.id);
     });

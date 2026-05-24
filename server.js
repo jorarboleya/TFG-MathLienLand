@@ -20,14 +20,12 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-// Cabeceras necesarias para que Godot HTML5 funcione (SharedArrayBuffer)
 app.use((req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
   res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
   next();
 });
 
-// Parsear body JSON en las peticiones POST
 app.use(express.json());
 
 // Servir archivos estáticos. Los binarios del juego Godot (PCK/WASM) los
@@ -208,7 +206,6 @@ const ALLOWED_MINIGAMES = [
   'endless-runner'
 ];
 
-// Prompt templates per minigame. Receive the desired question count.
 const MINIGAME_PROMPTS = {
   labyrinth: (count) =>
     `Generate exactly ${count} rule of three (direct and inverse proportionality) math word problems for middle school students. Use varied real-world contexts (maps, workers, quantities, prices, speeds, recipes…).
@@ -277,9 +274,7 @@ const DEFAULT_COUNTS = {
 };
 
 // ---------------------------------------------------------------------------
-// Rate limiter for all AI endpoints (Phase 9)
-// Prevents a single IP from exhausting the Gemini free-tier daily quota.
-// Applied to every route under /api/ai/* via app.use before the first route.
+// Rate limiter — prevents a single IP from exhausting the Gemini free-tier daily quota
 // ---------------------------------------------------------------------------
 const aiLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour sliding window
@@ -291,11 +286,9 @@ const aiLimiter = rateLimit({
 app.use('/api/ai', aiLimiter);
 
 // ---------------------------------------------------------------------------
-// AI endpoints — student/teacher analysis (Phases 2 & 3)
+// AI endpoints — student/teacher analysis
 // ---------------------------------------------------------------------------
 
-// POST /api/ai/student-summary
-// Receives student stats and returns an AI-generated analysis paragraph
 app.post('/api/ai/student-summary', requireAuth, requireRole('student'), async (req, res) => {
   const {
     sessions,
@@ -371,8 +364,6 @@ Write a short paragraph (maximum 80 words) addressed directly to the student. Do
   }
 });
 
-// POST /api/ai/group-analysis
-// Receives group-level stats and returns an AI-generated analysis for the teacher
 app.post('/api/ai/group-analysis', requireAuth, requireRole('teacher'), async (req, res) => {
   const {
     groupId,
@@ -426,8 +417,6 @@ Write a short paragraph (maximum 80 words) addressed to the teacher. Identify wh
   }
 });
 
-// POST /api/ai/student-summary-teacher
-// Receives individual student stats and returns a 3rd-person AI summary for the teacher
 app.post('/api/ai/student-summary-teacher', requireAuth, requireRole('teacher'), async (req, res) => {
   const {
     studentId,
@@ -493,16 +482,12 @@ Write a short paragraph (maximum 60 words) in third person addressed to the teac
 });
 
 // ---------------------------------------------------------------------------
-// AI question generation — Phase 5
+// AI question generation
 // ---------------------------------------------------------------------------
 
 const AI_MINIGAMES = ['labyrinth', 'dividing-hills', 'decimal-meteors', 'endless-runner'];
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // regenerate after 24 h
 
-// Core generation function shared by auto-generation and the teacher dashboard.
-// Returns the questions array or throws on failure.
-// After parsing, filters out mathematically invalid questions.
-// Retries once if fewer than 70% of the requested questions pass validation.
 async function callGeminiForQuestions(minigame) {
   const count = DEFAULT_COUNTS[minigame];
   const prompt = MINIGAME_PROMPTS[minigame](count);
@@ -533,13 +518,11 @@ async function callGeminiForQuestions(minigame) {
   return bestQuestions;
 }
 
-// Saves questions to disk with a timestamp for cache invalidation.
 function saveQuestionsToDisk(minigame, questions) {
   const filePath = path.join(__dirname, 'questions', `${minigame}.json`);
   fs.writeFileSync(filePath, JSON.stringify({ questions, generated_at: new Date().toISOString() }, null, 2));
 }
 
-// Returns true if the file has questions generated less than CACHE_TTL_MS ago.
 function hasFreshQuestions(minigame) {
   const filePath = path.join(__dirname, 'questions', `${minigame}.json`);
   if (!fs.existsSync(filePath)) return false;
@@ -551,8 +534,6 @@ function hasFreshQuestions(minigame) {
   } catch { return false; }
 }
 
-// Auto-generates questions for a minigame if the cache is missing or stale.
-// Called at server startup; runs in the background, does not block.
 async function autoGenerateIfNeeded(minigame) {
   if (hasFreshQuestions(minigame)) {
     console.log(`[questions] ${minigame}: using cached questions`);
@@ -568,8 +549,6 @@ async function autoGenerateIfNeeded(minigame) {
   }
 }
 
-// POST /api/ai/generate-questions/:minigame
-// Called from the teacher dashboard to force-regenerate questions for a minigame.
 app.post('/api/ai/generate-questions/:minigame', requireAuth, requireRole('teacher'), async (req, res) => {
   const { minigame } = req.params;
   if (!MINIGAME_PROMPTS[minigame]) {
@@ -584,8 +563,6 @@ app.post('/api/ai/generate-questions/:minigame', requireAuth, requireRole('teach
   }
 });
 
-// POST /api/levels/:minigame/activate
-// Called from the teacher dashboard to write a question set to disk.
 app.post('/api/levels/:minigame/activate', requireAuth, requireRole('teacher'), (req, res) => {
   const { minigame } = req.params;
   if (!ALLOWED_MINIGAMES.includes(minigame)) {
@@ -609,11 +586,7 @@ app.post('/api/levels/:minigame/activate', requireAuth, requireRole('teacher'), 
 });
 
 // ---------------------------------------------------------------------------
-// Question files — Phase 4 + 5
-// GET /api/levels/:minigame
-// Serves the cached questions JSON. This endpoint remains public because the
-// Godot export consumes it directly, so it must not trigger Gemini generation.
-// Godot falls back to procedural generation if this returns {questions:[]}.
+// Question files — GET /api/levels/:minigame
 // ---------------------------------------------------------------------------
 
 app.get('/api/levels/:minigame', async (req, res) => {
@@ -624,7 +597,6 @@ app.get('/api/levels/:minigame', async (req, res) => {
 
   const filePath = path.join(__dirname, 'questions', `${minigame}.json`);
 
-  // Serve from cache if available
   if (fs.existsSync(filePath)) {
     try {
       const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -634,15 +606,11 @@ app.get('/api/levels/:minigame', async (req, res) => {
     } catch { /* fall through to generation */ }
   }
 
-  // Fallback: Godot will use procedural generation
   res.json({ questions: [] });
 });
 
 // ---------------------------------------------------------------------------
-// Adaptive levels — Phase 6
-// GET /api/adaptive-level/:minigame/:userId
-// Reads the student's last 10 sessions for that minigame, calculates accuracy,
-// and returns difficulty parameters tailored to their current level.
+// Adaptive levels — GET /api/adaptive-level/:minigame/:userId
 // ---------------------------------------------------------------------------
 
 app.get('/api/adaptive-level/:minigame/:userId', requireAuth, async (req, res) => {
@@ -692,11 +660,9 @@ app.get('/api/adaptive-level/:minigame/:userId', requireAuth, async (req, res) =
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    // Resolve the starting difficulty for this context (group ESO level or private default)
     let defaultLevel = PRIVATE_DEFAULT;
     if (groupContext) defaultLevel = ESO_DEFAULTS[groupContext.eso_level] ?? PRIVATE_DEFAULT;
 
-    // 1. Get the last 10 sessions for this user + minigame scoped to this context
     let query = supabaseAdmin
       .from('sessions')
       .select('id')
@@ -716,7 +682,6 @@ app.get('/api/adaptive-level/:minigame/:userId', requireAuth, async (req, res) =
 
     const sessionIds = sessions.map(s => s.id);
 
-    // 2. Get all answers for those sessions
     const { data: answers, error: ansErr } = await supabaseAdmin
       .from('answers')
       .select('correct, difficulty, time')
@@ -738,15 +703,9 @@ app.get('/api/adaptive-level/:minigame/:userId', requireAuth, async (req, res) =
 });
 
 // ---------------------------------------------------------------------------
-// Group lookup — Phase 9
-// GET /api/groups/lookup?code=XXXXXXXX
-// Replaces the client-side db.from('groups').select('id, name') mass query.
-// Accepts an 8-char invite code, verifies the JWT, and returns only the
-// matching group — or 404. This way the client never sees other groups' data.
+// Group lookup — GET /api/groups/lookup?code=XXXXXXXX
 // ---------------------------------------------------------------------------
 app.get('/api/groups/lookup', async (req, res) => {
-  // 1. Verify the caller is an authenticated user.
-  //    Without this check, any unauthenticated request could probe group codes.
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Authentication required' });
@@ -757,15 +716,11 @@ app.get('/api/groups/lookup', async (req, res) => {
     return res.status(401).json({ error: 'Invalid or expired token' });
   }
 
-  // 2. Validate the code format (8 hex chars, lowercase).
   const code = (req.query.code || '').toLowerCase().trim();
   if (!/^[0-9a-f]{8}$/.test(code)) {
     return res.status(400).json({ error: 'Invalid code format' });
   }
 
-  // 3. Look up only the group whose UUID starts with this code.
-  //    supabaseAdmin bypasses RLS — this is intentional: we want the server
-  //    to find the group without requiring a public RLS policy on 'groups'.
   const { data: group, error: groupErr } = await supabaseAdmin
     .from('groups')
     .select('id, name')
@@ -782,15 +737,11 @@ app.get('/api/groups/lookup', async (req, res) => {
     return res.status(404).json({ error: 'Group not found' });
   }
 
-  // 4. Return only the fields the client needs.
   res.json({ id: group.id, name: group.name });
 });
 
 // ---------------------------------------------------------------------------
-// CSV export
-// GET /api/groups/:groupId/export/sessions
-// GET /api/groups/:groupId/export/answers
-// Both require a valid teacher JWT and verify that the caller owns the group.
+// CSV export — GET /api/groups/:groupId/export/sessions|answers
 // ---------------------------------------------------------------------------
 
 function escapeCsv(val) {
@@ -806,9 +757,6 @@ function rowToCsv(fields) {
   return fields.map(escapeCsv).join(',');
 }
 
-// Extracts and verifies the Bearer token, then checks that the authenticated
-// user is the teacher_id of the requested group. Returns the group row on
-// success, or sends the appropriate error response and returns null.
 async function verifyTeacherGroupAccess(req, res, groupId) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -859,7 +807,6 @@ app.get('/api/groups/:groupId/export/sessions', async (req, res) => {
       ? await supabaseAdmin.from('answers').select('session_id, correct, time, difficulty').in('session_id', sessionIds)
       : { data: [] };
 
-    // Aggregate per session: correct count, total, avg difficulty
     const bySession = {};
     for (const a of (answers ?? [])) {
       if (!bySession[a.session_id]) bySession[a.session_id] = { correct: 0, total: 0, diffSum: 0, diffCount: 0 };
@@ -957,7 +904,6 @@ app.get('/api/groups/:groupId/export/answers', async (req, res) => {
 
 // ---------------------------------------------------------------------------
 // Delete group — DELETE /api/groups/:groupId
-// Removes answers → sessions → group (cascades group_members).
 // ---------------------------------------------------------------------------
 
 app.delete('/api/groups/:groupId', async (req, res) => {
@@ -990,9 +936,7 @@ app.delete('/api/groups/:groupId', async (req, res) => {
 // ---------------------------------------------------------------------------
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-  // Auto-generate questions for all AI-supported minigames in the background.
-  // Skips any minigame whose cache is still fresh (< 24 h old).
+  console.log(`Server running on http://localhost:${PORT}`);
   for (const minigame of AI_MINIGAMES) {
     autoGenerateIfNeeded(minigame).catch(() => {});
   }

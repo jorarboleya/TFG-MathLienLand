@@ -49,7 +49,6 @@
   <script>
     window.activeGroupId = null;
 
-    //check auth
     db.auth.getSession().then(async ({ data }) => {
       if (!data.session) {
         window.location.href = 'auth.html';

@@ -217,7 +217,6 @@
         <tbody>
     `;
 
-    //group-level stats for the AI analysis prompt
     const enrichedForGroup = allAnswers.map(a => ({
       ...a,
       minigame: sessionMap[a.session_id]?.minigame ?? 'Unknown'
@@ -299,7 +298,6 @@
       const goodStudents = alertStudents.filter(({ alert }) => alert.positive.level !== 'ok');
       const hasCritical  = badStudents.some(({ alert }) => alert.negative.level === 'critical');
 
-      //critical entries first
       badStudents.sort((a, b) => {
         if (a.alert.negative.level === 'critical' && b.alert.negative.level !== 'critical') return -1;
         if (b.alert.negative.level === 'critical' && a.alert.negative.level !== 'critical') return 1;
@@ -549,7 +547,6 @@
 
     const summaryType = `student-${studentId}-${groupId}`;
 
-    //check cache first
     const { data: cached } = await db
       .from('ai_summaries')
       .select('content, generated_at')
@@ -786,7 +783,6 @@
       negativeAlerts.push({ level: 'warning', message: `Below 60% accuracy in last 5 sessions: ${warningGames.join(', ')}` });
     }
 
-    //inactivity check
     const { enabled: inactivityEnabled, days: inactivityDays } = getInactivitySettings();
     if (inactivityEnabled && studentSessions.length > 0) {
       const lastDate = studentSessions.reduce(

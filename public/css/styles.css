@@ -1129,7 +1129,7 @@ button[type="submit"]:hover {
   font-size: 0.9rem;
 }
 
-/* ---- Question generation UI (Phase 5) ---- */
+/*Question generation UI*/
 .qgen-chips {
   display: flex;
   gap: 8px;

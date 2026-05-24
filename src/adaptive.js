@@ -14,8 +14,6 @@ const TIME_THRESHOLDS = {
   'labyrinth':       { fast: 40, slow: 70, very_slow: 100 },
 };
 
-// Returns the weighted score for a single answer.
-// Falls back to binary (1.0 / 0.0) when time data is unavailable.
 function answerScore(answer, thresholds) {
   if (!answer.correct) return 0;
   if (!thresholds || answer.time == null) return 1.0;
@@ -25,16 +23,6 @@ function answerScore(answer, thresholds) {
   return 0.50;
 }
 
-/**
- * Calculates the new difficulty level (1-10) based on a student's recent answers.
- * When a minigame is provided, correct answers are weighted by response time;
- * otherwise falls back to plain accuracy (binary 1/0 per answer).
- *
- * @param {Array<{correct: boolean, difficulty: number, time?: number}>} answers
- * @param {number} defaultLevel - used when no valid history exists (default 5)
- * @param {string|null} minigame - used to look up time thresholds (optional)
- * @returns {number} new difficulty level, clamped to [1, 10]
- */
 function calculateAdaptiveLevel(answers, defaultLevel = 5, minigame = null) {
   if (!answers || answers.length === 0) return defaultLevel;
 
@@ -56,13 +44,6 @@ function calculateAdaptiveLevel(answers, defaultLevel = 5, minigame = null) {
   return Math.max(currentLevel - 1, 1);
 }
 
-/**
- * Translates a difficulty level (1-10) into concrete game parameters for a minigame.
- *
- * @param {string} minigame
- * @param {number} level - integer 1-10
- * @returns {object} parameters specific to that minigame
- */
 function difficultyToParams(minigame, level) {
   switch (minigame) {
     case 'endless-runner': {

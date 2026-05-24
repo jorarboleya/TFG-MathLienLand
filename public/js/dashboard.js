@@ -142,7 +142,6 @@
   const allAnswers = answersResult.data ?? [];
 
 
-  //badge definitions
   const BADGES = [
     { id: 'first_game',      name: 'First Steps',     icon: '🎮', desc: 'Complete your first session' },
     { id: 'ten_sessions',    name: 'Dedicated',        icon: '⭐', desc: 'Play 10 sessions' },
@@ -291,7 +290,6 @@
 
   renderDashboard(privateSessions);
 
-  //load cached AI summary if fresh enough
   const { data: cached } = await db
     .from('ai_summaries')
     .select('content, generated_at')
@@ -642,17 +640,14 @@
       answersBySession[a.session_id].push(a);
     }
 
-    //first_game
     if (!earned.has('first_game') && sessions.length >= 1) {
       newlyEarned.push('first_game'); earned.add('first_game');
     }
 
-    //ten_sessions
     if (!earned.has('ten_sessions') && sessions.length >= 10) {
       newlyEarned.push('ten_sessions'); earned.add('ten_sessions');
     }
 
-    //accuracy_master: 100% correct in a session with at least 5 answers
     if (!earned.has('accuracy_master')) {
       for (const s of sessions) {
         const ans = answersBySession[s.id] ?? [];
@@ -663,7 +658,6 @@
       }
     }
 
-    //rising_star: avg difficulty >= 8 in any session (min 3 answers)
     if (!earned.has('rising_star')) {
       for (const s of sessions) {
         const valid = (answersBySession[s.id] ?? []).filter(a => (a.difficulty ?? 0) >= 1);
@@ -674,7 +668,6 @@
       }
     }
 
-    //all_minigames: played all 4 AI-powered minigames at least once
     if (!earned.has('all_minigames')) {
       const AI_MINIGAMES = ['labyrinth', 'dividing-hills', 'decimal-meteors', 'endless-runner'];
       const playedMinigames = new Set(sessions.map(s => s.minigame).filter(Boolean));
@@ -683,7 +676,6 @@
       }
     }
 
-    //comeback: accuracy improves by 20+ points vs previous session in the same minigame
     if (!earned.has('comeback')) {
       const byMinigame = {};
       for (const s of sessions) {
@@ -708,7 +700,6 @@
       }
     }
 
-    //week_player (On a Roll): 3 consecutive sessions >90% accuracy in the same minigame
     if (!earned.has('week_player')) {
       const byMinigame = {};
       for (const s of sessions) {
