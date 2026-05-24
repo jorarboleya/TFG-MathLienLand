@@ -580,6 +580,7 @@
             fill: true,
             tension: 0.3,
             spanGaps: true,
+            clip: false,
           },
           {
             label: 'Accuracy (÷10)',
@@ -592,12 +593,14 @@
             tension: 0.3,
             spanGaps: true,
             borderDash: [5, 3],
+            clip: false,
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+
         plugins: {
           legend: {
             display: true,
