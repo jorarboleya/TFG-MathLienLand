@@ -2,70 +2,7 @@
   "questions": [
     {
       "type": 0,
-      "text": "Is 78 divisible by 2?",
-      "answer": "B",
-      "options": {
-        "A": "No",
-        "B": "Yes"
-      }
-    },
-    {
-      "type": 0,
-      "text": "Is 123 divisible by 3?",
-      "answer": "B",
-      "options": {
-        "A": "No",
-        "B": "Yes"
-      }
-    },
-    {
-      "type": 0,
-      "text": "Is 150 divisible by 4?",
-      "answer": "A",
-      "options": {
-        "A": "No",
-        "B": "Yes"
-      }
-    },
-    {
-      "type": 0,
-      "text": "Is 345 divisible by 5?",
-      "answer": "B",
-      "options": {
-        "A": "No",
-        "B": "Yes"
-      }
-    },
-    {
-      "type": 0,
-      "text": "Is 216 divisible by 6?",
-      "answer": "B",
-      "options": {
-        "A": "No",
-        "B": "Yes"
-      }
-    },
-    {
-      "type": 0,
-      "text": "Is 549 divisible by 9?",
-      "answer": "B",
-      "options": {
-        "A": "No",
-        "B": "Yes"
-      }
-    },
-    {
-      "type": 0,
-      "text": "Is 830 divisible by 10?",
-      "answer": "B",
-      "options": {
-        "A": "No",
-        "B": "Yes"
-      }
-    },
-    {
-      "type": 0,
-      "text": "Is 451 divisible by 11?",
+      "text": "Is 72 divisible by 2?",
       "answer": "B",
       "options": {
         "A": "No",
@@ -84,71 +21,134 @@
       }
     },
     {
+      "type": 0,
+      "text": "Is 123 divisible by 3?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
       "type": 1,
-      "text": "Select the GCD of 20 and 30:",
+      "text": "Select the GCD of 30 and 45:",
       "answer": "A",
       "options": {
-        "A": "10",
+        "A": "15",
         "B": "5",
-        "C": "20",
-        "D": "2"
+        "C": "10",
+        "D": "3"
       }
     },
     {
-      "type": 1,
-      "text": "Select the GCD of 15 and 25:",
+      "type": 0,
+      "text": "Is 134 divisible by 4?",
       "answer": "A",
       "options": {
-        "A": "5",
-        "B": "1",
-        "C": "3",
-        "D": "15"
+        "A": "No",
+        "B": "Yes"
       }
     },
     {
       "type": 1,
-      "text": "Select the GCD of 8 and 12:",
+      "text": "Select the GCD of 8 and 20:",
       "answer": "A",
       "options": {
         "A": "4",
         "B": "2",
         "C": "8",
-        "D": "1"
+        "D": "10"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 570 divisible by 5?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
       }
     },
     {
       "type": 1,
-      "text": "Select the GCD of 36 and 48:",
+      "text": "Select the GCD of 7 and 13:",
       "answer": "A",
       "options": {
-        "A": "12",
-        "B": "6",
-        "C": "18",
-        "D": "4"
+        "A": "1",
+        "B": "7",
+        "C": "13",
+        "D": "91"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 216 divisible by 6?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
       }
     },
     {
       "type": 1,
-      "text": "Select the GCD of 7 and 14:",
+      "text": "Select the GCD of 24 and 40:",
+      "answer": "A",
+      "options": {
+        "A": "8",
+        "B": "4",
+        "C": "6",
+        "D": "12"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 459 divisible by 9?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
+      "type": 1,
+      "text": "Select the GCD of 100 and 150:",
+      "answer": "A",
+      "options": {
+        "A": "50",
+        "B": "25",
+        "C": "10",
+        "D": "75"
+      }
+    },
+    {
+      "type": 0,
+      "text": "Is 310 divisible by 10?",
+      "answer": "B",
+      "options": {
+        "A": "No",
+        "B": "Yes"
+      }
+    },
+    {
+      "type": 1,
+      "text": "Select the GCD of 14 and 21:",
       "answer": "A",
       "options": {
         "A": "7",
         "B": "1",
-        "C": "2",
-        "D": "14"
+        "C": "14",
+        "D": "21"
       }
     },
     {
-      "type": 1,
-      "text": "Select the GCD of 10 and 15:",
-      "answer": "A",
+      "type": 0,
+      "text": "Is 242 divisible by 11?",
+      "answer": "B",
       "options": {
-        "A": "5",
-        "B": "1",
-        "C": "2",
-        "D": "10"
+        "A": "No",
+        "B": "Yes"
       }
     }
   ],
-  "generated_at": "2026-04-30T10:10:01.783Z"
+  "generated_at": "2026-05-23T17:16:02.184Z"
 }

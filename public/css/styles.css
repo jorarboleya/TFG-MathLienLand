@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +8,9 @@
 
 
 body {
-  background-color: #f5f5f5;
+  background-color: #fffef5;
+  background-image: linear-gradient(170deg, #ffffff 0%, #fffde7 50%, #fef3c7 100%);
+  background-attachment: fixed;
   color: #222;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
@@ -18,8 +22,8 @@ body {
 header {
   width: 100%;
   padding: 16px 32px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #ddd;
+  background-color: #fffef8;
+  border-bottom: 1px solid #f0e9d2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,6 +34,8 @@ header h1 {
   font-size: 1.8rem;
   color: #222;
   letter-spacing: 1px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
 }
 
 main {
@@ -186,8 +192,13 @@ button[type="submit"]:hover {
 
 /*Index page*/
 
+.page-index {
+}
+
 .page-index main {
   gap: 24px;
+  justify-content: center;
+  padding-bottom: 12vh;
 }
 
 .page-index p {
@@ -196,6 +207,19 @@ button[type="submit"]:hover {
   text-align: center;
   max-width: 480px;
   line-height: 1.6;
+}
+
+.hero-mascot {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(251, 191, 36, 0.35));
+  animation: mascot-float 3.5s ease-in-out infinite;
+}
+
+@keyframes mascot-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
 }
 
 /*Auth page*/
@@ -207,6 +231,27 @@ button[type="submit"]:hover {
 .page-auth header {
   position: fixed;
   top: 0;
+}
+
+
+.auth-mascot {
+  position: fixed;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  top: 170px;
+  filter: drop-shadow(0 4px 12px rgba(251, 191, 36, 0.25));
+  animation: mascot-float 3.5s ease-in-out infinite;
+}
+
+.auth-mascot--left {
+  right: calc(50% + 250px);
+}
+
+.auth-mascot--right {
+  left: calc(50% + 250px);
+  transform: scaleX(-1);
+  animation: mascot-float-mirror 3.5s ease-in-out infinite;
 }
 
 /*Game page*/
@@ -224,6 +269,32 @@ button[type="submit"]:hover {
 .page-game main {
   width: 100%;
   max-width: 1200px;
+  position: relative;
+}
+
+.game-mascot {
+  position: fixed;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  top: 80px;
+  filter: drop-shadow(0 4px 12px rgba(251, 191, 36, 0.25));
+  animation: mascot-float 3.5s ease-in-out infinite;
+}
+
+.game-mascot--left {
+  left: 75px;
+}
+
+.game-mascot--right {
+  right: 75px;
+  transform: scaleX(-1);
+  animation: mascot-float-mirror 3.5s ease-in-out infinite;
+}
+
+@keyframes mascot-float-mirror {
+  0%, 100% { transform: scaleX(-1) translateY(0); }
+  50%       { transform: scaleX(-1) translateY(-10px); }
 }
 
 /*Dashboard page*/
@@ -256,14 +327,21 @@ button[type="submit"]:hover {
 
 .stat-card {
   background: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid #ede8da;
   border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.4rem;
 }
+
+.stat-card--blue   { border-top: 3px solid #2563eb; }
+.stat-card--green  { border-top: 3px solid #16a34a; }
+.stat-card--amber  { border-top: 3px solid #f59e0b; }
+.stat-card--purple { border-top: 3px solid #7c3aed; }
+
 
 .stat-value {
   font-size: 2rem;
@@ -288,8 +366,9 @@ button[type="submit"]:hover {
 
 .chart-card {
   background: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid #ede8da;
   border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -417,8 +496,9 @@ button[type="submit"]:hover {
 
 .teacher-card {
   background: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid #ede8da;
   border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   padding: 1.5rem 2rem;
   display: flex;
   flex-direction: column;

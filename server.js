@@ -30,7 +30,19 @@ app.use((req, res, next) => {
 // Parsear body JSON en las peticiones POST
 app.use(express.json());
 
-// Servir archivos estáticos
+// Servir archivos estáticos. Los binarios del juego Godot (PCK/WASM) los
+// servimos con cache deshabilitado para que cada re-export sea visible
+// inmediatamente sin que el navegador devuelva la versión cacheada.
+app.use('/game', express.static(path.join(__dirname, 'public', 'game'), {
+  etag: false,
+  lastModified: false,
+  maxAge: 0,
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ---------------------------------------------------------------------------
